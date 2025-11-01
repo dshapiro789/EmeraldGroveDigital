@@ -1,0 +1,8 @@
+name = "emerald-grove-digital"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = ".vercel/output/static"
+
+# Environment variables (set these in Cloudflare Dashboard)
+# [env.production]
+# OPENROUTER_API_KEY = "your-key-here"
+# SITE_URL = "https://yourdomain.com"
