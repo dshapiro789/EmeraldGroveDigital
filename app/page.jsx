@@ -266,7 +266,7 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
         transition: "transform 0.1s ease-out",
       }}
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
         <div className="absolute -inset-40 bg-gradient-to-br from-emerald-500/10 via-emerald-400/10 to-emerald-300/10 blur-2xl" />
       </div>
       {Icon && (
@@ -279,7 +279,9 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
       )}
       <h3 className="text-xl md:text-2xl font-semibold text-emerald-50">{title}</h3>
       <p className="mt-2 text-emerald-100/80 leading-relaxed">{desc}</p>
-      {children}
+      <div className="relative z-10">
+        {children}
+      </div>
     </motion.div>
   );
 }
@@ -791,8 +793,7 @@ export default function Page() {
               href="https://bonsaiwebdesign.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link"
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link cursor-pointer relative z-20"
             >
               <span className="group-hover/link:underline">Visit site</span> <ArrowRight size={14} className="group-hover/link:translate-x-0.5 transition-transform" />
             </a>
@@ -807,8 +808,7 @@ export default function Page() {
               href="https://aibitcointutor.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link"
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link cursor-pointer relative z-20"
             >
               <span className="group-hover/link:underline">Visit site</span> <ArrowRight size={14} className="group-hover/link:translate-x-0.5 transition-transform" />
             </a>
@@ -823,8 +823,7 @@ export default function Page() {
               href="https://cryptoapparel.net" 
               target="_blank" 
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link"
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link cursor-pointer relative z-20"
             >
               <span className="group-hover/link:underline">Visit site</span> <ArrowRight size={14} className="group-hover/link:translate-x-0.5 transition-transform" />
             </a>
