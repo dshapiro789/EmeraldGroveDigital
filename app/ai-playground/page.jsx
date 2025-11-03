@@ -191,19 +191,19 @@ const AI_MODELS = [
     color: "amber"
   },
   {
-    id: "google/gemini-pro-1.5",
-    name: "Gemini Pro 1.5",
-    provider: "Google",
+    id: "x-ai/grok-4-fast",
+    name: "Grok 4",
+    provider: "xAI",
     icon: Sparkles,
     description: "Fast and efficient",
     color: "blue"
   },
   {
-    id: "meta-llama/llama-3.1-70b-instruct",
-    name: "Llama 3.1 70B",
-    provider: "Meta",
+    id: "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+    name: "Venice: Uncensored",
+    provider: "VeniceAI",
     icon: MessageCircle,
-    description: "Open source powerhouse",
+    description: "Advanced and unrestricted",
     color: "purple"
   }
 ];
