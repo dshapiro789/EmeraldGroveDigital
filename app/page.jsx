@@ -570,13 +570,13 @@ export default function Page() {
   const handleNavClick = (e, targetId) => {
     e.preventDefault();
     
-    // On mobile, scroll first, then close menu after a brief delay
-    smoothScrollTo(targetId);
+    // Close menu immediately on mobile
+    setNavOpen(false);
     
-    // Delay closing the menu so scroll can initiate properly
+    // Small delay to let menu close, then scroll
     setTimeout(() => {
-      setNavOpen(false);
-    }, 100);
+      smoothScrollTo(targetId);
+    }, 300);
   };
 
   return (
@@ -807,9 +807,9 @@ export default function Page() {
       {/* FOOTER */}
       <footer className="border-t border-emerald-300/10 py-10">
         <div className="container mx-auto max-w-6xl px-4 text-sm text-emerald-300/70 flex items-center justify-between">
-          <span>Â© {new Date().getFullYear()} Emerald Grove Digital</span>
+          <span>© {new Date().getFullYear()} Emerald Grove Digital</span>
           <a id="ai" href="#" className="hover:text-emerald-200">
-            Terms Â· Privacy
+            Terms · Privacy
           </a>
         </div>
       </footer>
