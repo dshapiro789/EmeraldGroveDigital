@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useReducedMotion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
 import { ArrowRight, Send, Sparkles, Leaf, Menu, X, Settings, MessageCircle, Play, Shield, Braces, Cpu, LayoutPanelLeft } from "lucide-react";
 import AIGroveSidebar from './components/AIGroveSidebar';
 
@@ -154,75 +154,43 @@ function CursorTrail() {
 // ============================================================================
 // FLOATING PARTICLES COMPONENT
 // ============================================================================
-function FloatingParticles({ baseCount = 15 }) {
-  const [isTouch, setIsTouch] = useState(true); // optimistic to avoid flashes
-  const reduce = useReducedMotion();
+function FloatingParticles() {
+  const [windowHeight, setWindowHeight] = useState(1000);
 
-  // Detect touch devices on mount
   useEffect(() => {
-    const checkTouch = () => {
-      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      setIsTouch(hasTouch);
-    };
-    checkTouch();
+    setWindowHeight(window.innerHeight);
   }, []);
 
-  // Dial down count on touch / reduced motion
-  const count = useMemo(() => {
-    if (reduce) return Math.max(4, Math.floor(baseCount * 0.4));
-    if (isTouch) return Math.max(6, Math.floor(baseCount * 0.6));
-    return baseCount;
-  }, [isTouch, reduce, baseCount]);
-
-  const particles = useMemo(() => {
-    return Array.from({ length: count }).map((_, i) => {
-      // Tighter travel on touch for less GPU load
-      const travel = isTouch ? 40 : 90;
-      const size = isTouch ? 6 : 10;
-      const dur = reduce ? 16 : isTouch ? 22 : 28;
-      return {
-        id: i,
-        x0: Math.random() * 100,
-        y0: Math.random() * 100,
-        dx: (Math.random() * 2 - 1) * travel,
-        dy: (Math.random() * 2 - 1) * travel,
-        size,
-        dur,
-        delay: Math.random() * 6
-      };
-    });
-  }, [count, isTouch, reduce]);
+  const particles = Array.from({ length: 20 }, (_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    delay: Math.random() * 5,
+    duration: 10 + Math.random() * 10,
+    size: 2 + Math.random() * 4,
+  }));
 
   return (
-    <div
-      className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: 0, contain: 'layout paint', transform: 'translateZ(0)' }}
-      aria-hidden="true"
-    >
-      {particles.map(p => (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full"
+          className="absolute rounded-full bg-emerald-300/20"
           style={{
-            top: `${p.y0}%`,
-            left: `${p.x0}%`,
+            left: p.left,
             width: p.size,
             height: p.size,
-            background:
-              'radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.1) 60%, rgba(255,255,255,0) 70%)',
-            willChange: 'transform'
+            bottom: "-20px",
           }}
-          initial={{ x: 0, y: 0, opacity: 0.85 }}
           animate={{
-            x: [0, p.dx, -p.dx * 0.6, 0],
-            y: [0, p.dy, -p.dy * 0.6, 0],
-            opacity: [0.85, 0.9, 0.75, 0.85]
+            y: [0, -(windowHeight + 100)],
+            x: [0, Math.sin(p.id) * 50],
+            opacity: [0, 0.8, 0.8, 0],
           }}
           transition={{
-            duration: p.dur,
+            duration: p.duration,
+            delay: p.delay,
             repeat: Infinity,
-            ease: 'easeInOut',
-            delay: p.delay
+            ease: "linear",
           }}
         />
       ))}
