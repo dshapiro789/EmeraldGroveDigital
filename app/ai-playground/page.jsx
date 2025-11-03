@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 /**
- * AI Playground â€” Emerald Grove Digital (STREAMING VERSION)
+ * AI Playground - Emerald Grove Digital (STREAMING VERSION)
  * 
  * Features:
  * - Real-time streaming responses (word-by-word)
@@ -268,7 +268,7 @@ function ModelSelector({ selectedModel, onSelect }) {
                             )}
                           </div>
                           <p className="text-xs text-emerald-300/60 mt-0.5">
-                            {model.provider} Â· {model.description}
+                            {model.provider} · {model.description}
                           </p>
                         </div>
                       </div>
@@ -644,7 +644,7 @@ export default function AIPlayground() {
               </button>
             </div>
             <p className="mt-3 text-xs text-center text-emerald-400/40">
-              Shift + Enter for new line â€¢ Real-time streaming powered by OpenRouter
+              Shift + Enter for new line. Real-time streaming powered by OpenRouter
             </p>
           </form>
         </div>
