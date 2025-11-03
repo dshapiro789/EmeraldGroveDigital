@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-  background: #041712;
+  background: transparent; /* Mesh gradient component handles the background */
   cursor: none; /* Hide default cursor for custom trail effect */
 }
 

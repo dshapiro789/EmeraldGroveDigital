@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Send, Sparkles, Leaf, Menu, X, Settings, MessageCircle, Play, Shield, Braces, Cpu, LayoutPanelLeft } from "lucide-react";
 import AIGroveSidebar from './components/AIGroveSidebar';
+import MeshGradientElegant from './components/MeshGradientElegant';
 
 /**
  * Emerald Grove Digital - Enhanced Premium Version
@@ -595,6 +596,9 @@ export default function Page() {
       <FloatingParticles />
       
       <CursorTrail />
+      
+      {/* Elegant mesh gradient background */}
+      <MeshGradientElegant />
 
       {/* HEADER */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-emerald-950/80 border-b border-emerald-300/10">
