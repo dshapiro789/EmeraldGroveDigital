@@ -1,22 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useReducedMotion } from "framer-motion";
 import { ArrowRight, Send, Sparkles, Leaf, Menu, X, Settings, MessageCircle, Play, Shield, Braces, Cpu, LayoutPanelLeft } from "lucide-react";
 import AIGroveSidebar from './components/AIGroveSidebar';
-import dynamic from 'next/dynamic';
-
-// Import ClientOnlyEffects with SSR disabled to prevent hydration errors
-const ClientOnlyEffects = dynamic(
-  () => import('./components/ClientOnlyEffects'),
-  { 
-    ssr: false,
-    loading: () => null // No loading state needed
-  }
-);
 
 /**
- * Emerald Grove Digital — Enhanced Premium Version
+ * Emerald Grove Digital â€” Enhanced Premium Version
  * Features:
  * - Cursor trail effect (with touch device detection!)
  * - Floating particle effect
@@ -158,6 +148,85 @@ function CursorTrail() {
         </div>
       ))}
     </>
+  );
+}
+
+// ============================================================================
+// FLOATING PARTICLES COMPONENT
+// ============================================================================
+function FloatingParticles({ baseCount = 15 }) {
+  const [isTouch, setIsTouch] = useState(true); // optimistic to avoid flashes
+  const reduce = useReducedMotion();
+
+  // Detect touch devices on mount
+  useEffect(() => {
+    const checkTouch = () => {
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      setIsTouch(hasTouch);
+    };
+    checkTouch();
+  }, []);
+
+  // Dial down count on touch / reduced motion
+  const count = useMemo(() => {
+    if (reduce) return Math.max(4, Math.floor(baseCount * 0.4));
+    if (isTouch) return Math.max(6, Math.floor(baseCount * 0.6));
+    return baseCount;
+  }, [isTouch, reduce, baseCount]);
+
+  const particles = useMemo(() => {
+    return Array.from({ length: count }).map((_, i) => {
+      // Tighter travel on touch for less GPU load
+      const travel = isTouch ? 40 : 90;
+      const size = isTouch ? 6 : 10;
+      const dur = reduce ? 16 : isTouch ? 22 : 28;
+      return {
+        id: i,
+        x0: Math.random() * 100,
+        y0: Math.random() * 100,
+        dx: (Math.random() * 2 - 1) * travel,
+        dy: (Math.random() * 2 - 1) * travel,
+        size,
+        dur,
+        delay: Math.random() * 6
+      };
+    });
+  }, [count, isTouch, reduce]);
+
+  return (
+    <div
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: 0, contain: 'layout paint', transform: 'translateZ(0)' }}
+      aria-hidden="true"
+    >
+      {particles.map(p => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            top: `${p.y0}%`,
+            left: `${p.x0}%`,
+            width: p.size,
+            height: p.size,
+            background:
+              'radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.1) 60%, rgba(255,255,255,0) 70%)',
+            willChange: 'transform'
+          }}
+          initial={{ x: 0, y: 0, opacity: 0.85 }}
+          animate={{
+            x: [0, p.dx, -p.dx * 0.6, 0],
+            y: [0, p.dy, -p.dy * 0.6, 0],
+            opacity: [0.85, 0.9, 0.75, 0.85]
+          }}
+          transition={{
+            duration: p.dur,
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: p.delay
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -455,7 +524,7 @@ function ContactForm() {
       const data = await response.json();
 
       if (response.ok) {
-        setSubmitStatus({ type: 'success', message: 'Transmission complete: Connection taking root — We\'ll be in touch shortly!' });
+        setSubmitStatus({ type: 'success', message: 'Transmission complete: Connection taking root â€” We\'ll be in touch shortly!' });
         setFormState({ name: '', email: '', company: '', message: '' });
       } else {
         setSubmitStatus({ type: 'error', message: data.error || 'Failed to send message. Please try again.' });
@@ -586,8 +655,8 @@ export default function Page() {
     <div className="relative min-h-screen text-emerald-100">
       <ScrollProgress />
       
-      {/* Use ClientOnlyEffects instead of FloatingParticles */}
-      <ClientOnlyEffects />
+      {/* Floating particles effect */}
+      <FloatingParticles />
       
       <CursorTrail />
 
@@ -736,11 +805,11 @@ export default function Page() {
           <TiltCard
             icon={Cpu}
             title="Systems that grow"
-            desc="From seed idea to living product — thoughtful architectures that scale with you."
+            desc="From seed idea to living product â€” thoughtful architectures that scale with you."
             delay={0}
           >
             <ul className="mt-4 space-y-2 text-emerald-100/80 list-disc list-inside">
-              <li>Research → Strategy → Prototyping → Launch</li>
+              <li>Research â†’ Strategy â†’ Prototyping â†’ Launch</li>
               <li>AI copilots, RAG search, automations</li>
               <li>Design systems & accessibility by default</li>
             </ul>
@@ -814,7 +883,7 @@ export default function Page() {
             </p>
             <ul className="mt-6 space-y-2 text-emerald-100/80 list-disc list-inside">
               <li>2-week Discovery & Strategy</li>
-              <li>4–8 week Build Cycles</li>
+              <li>4â€“8 week Build Cycles</li>
               <li>Ongoing Care & Improvement</li>
             </ul>
           </motion.div>
@@ -825,9 +894,9 @@ export default function Page() {
       {/* FOOTER */}
       <footer className="border-t border-emerald-300/10 py-10">
         <div className="container mx-auto max-w-6xl px-4 text-sm text-emerald-300/70 flex items-center justify-between">
-          <span>© {new Date().getFullYear()} Emerald Grove Digital</span>
+          <span>Â© {new Date().getFullYear()} Emerald Grove Digital</span>
           <a id="ai" href="#" className="hover:text-emerald-200">
-            Terms · Privacy
+            Terms Â· Privacy
           </a>
         </div>
       </footer>
