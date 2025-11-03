@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Send, Sparkles, Leaf, Menu, X, Settings, MessageCircle, Play, Shield, Braces, Cpu, LayoutPanelLeft } from "lucide-react";
 import AIGroveSidebar from './components/AIGroveSidebar';
 
@@ -199,20 +199,26 @@ function FloatingParticles() {
 }
 
 // ============================================================================
-// SCROLL PROGRESS INDICATOR
+// SCROLL PROGRESS INDICATOR (Lightweight)
 // ============================================================================
 function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (window.scrollY / totalHeight) * 100;
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 origin-left z-50"
-      style={{ scaleX }}
+    <div
+      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 origin-left z-50 transition-transform duration-150 ease-out"
+      style={{ transform: `scaleX(${scrollProgress / 100})` }}
     />
   );
 }
@@ -335,38 +341,9 @@ const smoothScrollTo = (elementId, offset = 80) => {
 };
 
 // ============================================================================
-// SECTION COMPONENT WITH FLOATING PARALLAX BACKGROUNDS
+// SECTION COMPONENT WITH STATIC BACKGROUNDS
 // ============================================================================
 const Section = ({ id, title, eyebrow, children }) => {
-  const { scrollY } = useScroll();
-  const ref = useRef(null);
-  const [elementTop, setElementTop] = useState(0);
-  
-  useEffect(() => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    setElementTop(rect.top + window.scrollY);
-  }, []);
-  
-  // Create unique parallax for each section based on scroll position
-  const parallax1 = useTransform(
-    scrollY,
-    [elementTop - 500, elementTop + 500],
-    [-100, 100]
-  );
-  
-  const parallax2 = useTransform(
-    scrollY,
-    [elementTop - 500, elementTop + 500],
-    [50, -50]
-  );
-  
-  const parallax3 = useTransform(
-    scrollY,
-    [elementTop - 500, elementTop + 500],
-    [-80, 80]
-  );
-  
   // Different background patterns for variety
   const backgrounds = {
     about: {
@@ -402,28 +379,25 @@ const Section = ({ id, title, eyebrow, children }) => {
   const bg = backgrounds[id] || backgrounds.about;
   
   return (
-    <section ref={ref} id={id} className="relative py-24 md:py-32 overflow-hidden">
-      {/* Floating parallax background shapes */}
+    <section id={id} className="relative py-24 md:py-32 overflow-hidden">
+      {/* Static background shapes */}
       <div className="absolute inset-0 pointer-events-none">
-        <motion.div
+        <div
           className={`absolute ${bg.position1} w-96 h-96 rounded-full blur-[120px] opacity-40`}
           style={{
             background: `radial-gradient(circle, ${bg.color1}, transparent 70%)`,
-            y: parallax1,
           }}
         />
-        <motion.div
+        <div
           className={`absolute ${bg.position2} w-80 h-80 rounded-full blur-[100px] opacity-30`}
           style={{
             background: `radial-gradient(circle, ${bg.color2}, transparent 70%)`,
-            y: parallax2,
           }}
         />
-        <motion.div
+        <div
           className={`absolute ${bg.position3} w-64 h-64 rounded-full blur-[80px] opacity-25`}
           style={{
             background: `radial-gradient(circle, ${bg.color1}, transparent 70%)`,
-            y: parallax3,
           }}
         />
         
@@ -592,20 +566,6 @@ function ContactForm() {
 // ============================================================================
 export default function Page() {
   const [navOpen, setNavOpen] = useState(false);
-  const { scrollY } = useScroll();
-  
-  // Enhanced parallax values (more noticeable!)
-  const heroY = useTransform(scrollY, [0, 600], [0, 200]);
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
-  
-  // Layered parallax for depth effect
-  const heroTitleY = useTransform(scrollY, [0, 600], [0, 120]);
-  const heroSubtitleY = useTransform(scrollY, [0, 600], [0, 160]);
-  const heroButtonY = useTransform(scrollY, [0, 600], [0, 200]);
-  
-  // Background elements move in opposite direction
-  const heroGlow1Y = useTransform(scrollY, [0, 600], [0, -100]);
-  const heroGlow2Y = useTransform(scrollY, [0, 600], [0, -150]);
 
   const handleNavClick = (e, targetId) => {
     e.preventDefault();
@@ -689,35 +649,22 @@ export default function Page() {
         </AnimatePresence>
       </header>
 
-      {/* HERO SECTION WITH ENHANCED PARALLAX */}
+      {/* HERO SECTION */}
       <section className="relative overflow-hidden">
-        {/* Background layer with parallax */}
-        <motion.div 
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="absolute inset-0 pointer-events-none"
-        >
-          <motion.div 
-            className="absolute -top-40 left-1/2 -translate-x-1/2 h-96 w-[120vw] bg-gradient-to-b from-emerald-300/10 via-emerald-400/10 to-transparent blur-3xl"
-            style={{ y: heroGlow1Y }}
-          />
-          <motion.div 
-            className="absolute -inset-20 bg-[radial-gradient(40%_40%_at_70%_10%,rgba(193,162,74,0.12),transparent)]"
-            style={{ y: heroGlow2Y }}
-          />
-        </motion.div>
+        {/* Background layer - static */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-96 w-[120vw] bg-gradient-to-b from-emerald-300/10 via-emerald-400/10 to-transparent blur-3xl" />
+          <div className="absolute -inset-20 bg-[radial-gradient(40%_40%_at_70%_10%,rgba(193,162,74,0.12),transparent)]" />
+        </div>
         
-        {/* Floating accent shapes with parallax */}
-        <motion.div
-          className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-400/5 blur-3xl pointer-events-none"
-          style={{ y: heroGlow1Y }}
-        />
+        {/* Floating accent shapes - static */}
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-400/5 blur-3xl pointer-events-none" />
         
         <div className="container mx-auto max-w-6xl px-4 py-24 md:py-36 relative">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            style={{ y: heroTitleY }}
             className="text-4xl md:text-6xl font-semibold tracking-tight text-emerald-50"
           >
             Where{" "}
@@ -736,7 +683,6 @@ export default function Page() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ y: heroSubtitleY }}
             className="mt-5 max-w-2xl text-emerald-100/80 leading-relaxed"
           >
             We cultivate intelligent products, lucid interfaces, and durable systems. Creativity, simplicity, and
@@ -746,7 +692,6 @@ export default function Page() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            style={{ y: heroButtonY }}
             className="mt-8 flex flex-wrap items-center gap-3"
           >
             <a
