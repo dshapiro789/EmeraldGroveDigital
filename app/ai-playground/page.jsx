@@ -199,11 +199,11 @@ const AI_MODELS = [
     color: "blue"
   },
   {
-    id: "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-    name: "Venice: Uncensored",
-    provider: "VeniceAI",
+    id: "google/gemini-2.5-flash",
+    name: "Gemini 2.5 Flash",
+    provider: "Google",
     icon: MessageCircle,
-    description: "Advanced and unrestricted",
+    description: "Google's state-of-the-art workhorse model",
     color: "purple"
   }
 ];
