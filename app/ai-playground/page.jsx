@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 /**
- * AI Playground — Emerald Grove Digital (STREAMING VERSION)
+ * AI Playground â€” Emerald Grove Digital (STREAMING VERSION)
  * 
  * Features:
  * - Real-time streaming responses (word-by-word)
@@ -217,13 +217,15 @@ function ModelSelector({ selectedModel, onSelect }) {
   const Icon = currentModel?.icon || Brain;
 
   return (
-    <div className="relative">
+    <div className="relative w-full sm:w-auto">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-900/30 border border-emerald-300/20 hover:bg-emerald-800/40 transition-colors"
+        className="w-full sm:w-auto flex items-center justify-between gap-2 px-4 py-2 rounded-lg bg-emerald-900/30 border border-emerald-300/20 hover:bg-emerald-800/40 transition-colors"
       >
-        <Icon size={16} className="text-emerald-400" />
-        <span className="text-sm font-medium">{currentModel?.name || "Select Model"}</span>
+        <div className="flex items-center gap-2">
+          <Icon size={16} className="text-emerald-400" />
+          <span className="text-sm font-medium">{currentModel?.name || "Select Model"}</span>
+        </div>
         <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -238,7 +240,7 @@ function ModelSelector({ selectedModel, onSelect }) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full mt-2 right-0 w-80 bg-emerald-950/95 backdrop-blur-xl border border-emerald-300/20 rounded-lg shadow-2xl z-50 overflow-hidden"
+              className="absolute top-full mt-2 left-0 right-0 sm:left-auto sm:right-0 sm:w-80 bg-emerald-950/95 backdrop-blur-xl border border-emerald-300/20 rounded-lg shadow-2xl z-50 overflow-hidden"
             >
               <div className="p-2 space-y-1 max-h-96 overflow-y-auto">
                 {AI_MODELS.map((model) => {
@@ -266,7 +268,7 @@ function ModelSelector({ selectedModel, onSelect }) {
                             )}
                           </div>
                           <p className="text-xs text-emerald-300/60 mt-0.5">
-                            {model.provider} · {model.description}
+                            {model.provider} Â· {model.description}
                           </p>
                         </div>
                       </div>
@@ -492,8 +494,43 @@ export default function AIPlayground() {
 
       {/* Header */}
       <header className="sticky top-0 z-40 bg-emerald-950/30 backdrop-blur-xl border-b border-emerald-300/10">
-        <div className="container mx-auto max-w-6xl px-4 py-4">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto max-w-6xl px-4 py-3">
+          {/* Mobile: Stack vertically */}
+          <div className="flex flex-col gap-3 sm:hidden">
+            {/* Row 1: Back button and title */}
+            <div className="flex items-center justify-between">
+              <a 
+                href="/"
+                className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
+              >
+                <ArrowLeft size={18} />
+                <span className="text-sm font-medium">Back to Grove</span>
+              </a>
+              <div className="flex items-center gap-2">
+                <Sparkles size={18} className="text-emerald-400" />
+                <h1 className="text-base font-semibold">AI Playground</h1>
+              </div>
+            </div>
+            {/* Row 2: Model selector and reset */}
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <ModelSelector 
+                  selectedModel={selectedModel}
+                  onSelect={setSelectedModel}
+                />
+              </div>
+              <button
+                onClick={handleReset}
+                className="p-2 rounded-lg bg-emerald-900/30 border border-emerald-300/20 hover:bg-emerald-800/40 transition-colors flex-shrink-0"
+                title="Reset conversation"
+              >
+                <RotateCcw size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Desktop: Single row */}
+          <div className="hidden sm:flex items-center justify-between">
             <div className="flex items-center gap-4">
               <a 
                 href="/"
@@ -502,7 +539,7 @@ export default function AIPlayground() {
                 <ArrowLeft size={18} />
                 <span className="text-sm font-medium">Back to Grove</span>
               </a>
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Sparkles size={20} className="text-emerald-400" />
                 <h1 className="text-lg font-semibold">AI Playground</h1>
               </div>
@@ -607,7 +644,7 @@ export default function AIPlayground() {
               </button>
             </div>
             <p className="mt-3 text-xs text-center text-emerald-400/40">
-              Shift + Enter for new line • Real-time streaming powered by OpenRouter
+              Shift + Enter for new line â€¢ Real-time streaming powered by OpenRouter
             </p>
           </form>
         </div>
