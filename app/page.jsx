@@ -791,9 +791,10 @@ export default function Page() {
               href="https://bonsaiwebdesign.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link"
             >
-              Visit site <ArrowRight size={14} />
+              <span className="group-hover/link:underline">Visit site</span> <ArrowRight size={14} className="group-hover/link:translate-x-0.5 transition-transform" />
             </a>
           </TiltCard>
           
@@ -806,9 +807,10 @@ export default function Page() {
               href="https://aibitcointutor.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link"
             >
-              Visit site <ArrowRight size={14} />
+              <span className="group-hover/link:underline">Visit site</span> <ArrowRight size={14} className="group-hover/link:translate-x-0.5 transition-transform" />
             </a>
           </TiltCard>
           
@@ -821,9 +823,10 @@ export default function Page() {
               href="https://cryptoapparel.net" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors group/link"
             >
-              Visit site <ArrowRight size={14} />
+              <span className="group-hover/link:underline">Visit site</span> <ArrowRight size={14} className="group-hover/link:translate-x-0.5 transition-transform" />
             </a>
           </TiltCard>
         </div>
