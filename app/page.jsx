@@ -6,7 +6,7 @@ import { ArrowRight, Send, Sparkles, Leaf, Menu, X, Settings, MessageCircle, Pla
 import AIGroveSidebar from './components/AIGroveSidebar';
 
 /**
- * Emerald Grove Digital â€” Enhanced Premium Version
+ * Emerald Grove Digital - Enhanced Premium Version
  * Features:
  * - Cursor trail effect (with touch device detection!)
  * - Floating particle effect
@@ -466,7 +466,7 @@ function ContactForm() {
       const data = await response.json();
 
       if (response.ok) {
-        setSubmitStatus({ type: 'success', message: 'Transmission complete: Connection taking root â€” We\'ll be in touch shortly!' });
+        setSubmitStatus({ type: 'success', message: 'Transmission complete: Connection taking root - We\'ll be in touch shortly!' });
         setFormState({ name: '', email: '', company: '', message: '' });
       } else {
         setSubmitStatus({ type: 'error', message: data.error || 'Failed to send message. Please try again.' });
@@ -718,11 +718,11 @@ export default function Page() {
           <TiltCard
             icon={Cpu}
             title="Systems that grow"
-            desc="From seed idea to living product â€” thoughtful architectures that scale with you."
+            desc="From seed idea to living product - thoughtful architectures that scale with you."
             delay={0}
           >
             <ul className="mt-4 space-y-2 text-emerald-100/80 list-disc list-inside">
-              <li>Research â†’ Strategy â†’ Prototyping â†’ Launch</li>
+              <li>Research - Strategy - Prototyping - Launch</li>
               <li>AI copilots, RAG search, automations</li>
               <li>Design systems & accessibility by default</li>
             </ul>
@@ -796,7 +796,7 @@ export default function Page() {
             </p>
             <ul className="mt-6 space-y-2 text-emerald-100/80 list-disc list-inside">
               <li>2-week Discovery & Strategy</li>
-              <li>4â€“8 week Build Cycles</li>
+              <li>4-8 week Build Cycles</li>
               <li>Ongoing Care & Improvement</li>
             </ul>
           </motion.div>
