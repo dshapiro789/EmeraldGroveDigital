@@ -566,17 +566,23 @@ function ContactForm() {
 // ============================================================================
 export default function Page() {
   const [navOpen, setNavOpen] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   const handleNavClick = (e, targetId) => {
     e.preventDefault();
     
-    // Close menu immediately on mobile
+    // Set scrolling state
+    setIsScrolling(true);
+    
+    // Close menu with animation on mobile
     setNavOpen(false);
     
-    // Small delay to let menu close, then scroll
+    // Wait for menu close animation (400ms) before scrolling
     setTimeout(() => {
       smoothScrollTo(targetId);
-    }, 300);
+      // Reset scrolling state after scroll completes
+      setTimeout(() => setIsScrolling(false), 800);
+    }, 400);
   };
 
   return (
@@ -625,25 +631,32 @@ export default function Page() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden border-t border-emerald-300/10"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="md:hidden border-t border-emerald-300/10 overflow-hidden"
             >
-              <div className="px-4 py-3 space-y-2">
-                <a href="#about" onClick={(e) => handleNavClick(e, "about")} className="block py-2">
+              <motion.div 
+                className="px-4 py-3 space-y-2"
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                exit={{ y: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <a href="#about" onClick={(e) => handleNavClick(e, "about")} className="block py-2 hover:text-emerald-200 transition-colors">
                   About
                 </a>
-                <a href="#services" onClick={(e) => handleNavClick(e, "services")} className="block py-2">
+                <a href="#services" onClick={(e) => handleNavClick(e, "services")} className="block py-2 hover:text-emerald-200 transition-colors">
                   Services
                 </a>
-                <a href="#work" onClick={(e) => handleNavClick(e, "work")} className="block py-2">
+                <a href="#work" onClick={(e) => handleNavClick(e, "work")} className="block py-2 hover:text-emerald-200 transition-colors">
                   Work
                 </a>
-                <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="block py-2">
+                <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="block py-2 hover:text-emerald-200 transition-colors">
                   Contact
                 </a>
-                <a href="/ai-playground" className="block py-2">
+                <a href="/ai-playground" className="block py-2 hover:text-emerald-200 transition-colors">
                   Playground
                 </a>
-              </div>
+              </motion.div>
             </motion.nav>
           )}
         </AnimatePresence>
@@ -769,14 +782,50 @@ export default function Page() {
       {/* WORK SECTION */}
       <Section id="work" eyebrow="Work" title="Selected outcomes">
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-          {[1, 2, 3].map((i) => (
-            <TiltCard
-              key={i}
-              title={`Project ${i}`}
-              desc="A short note about the problem, the approach, and the measurable impact."
-              delay={i * 0.1}
-            />
-          ))}
+          <TiltCard
+            title="Bonsai Web Design"
+            desc="Crafting timeless design and meaningful content for modern brands."
+            delay={0}
+          >
+            <a 
+              href="https://bonsaiwebdesign.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors"
+            >
+              Visit site <ArrowRight size={14} />
+            </a>
+          </TiltCard>
+          
+          <TiltCard
+            title="AI Bitcoin Tutor"
+            desc="Master Bitcoin with AI-Powered Learning"
+            delay={0.1}
+          >
+            <a 
+              href="https://aibitcointutor.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors"
+            >
+              Visit site <ArrowRight size={14} />
+            </a>
+          </TiltCard>
+          
+          <TiltCard
+            title="Crypto Apparel"
+            desc="Unchain Your Style"
+            delay={0.2}
+          >
+            <a 
+              href="https://cryptoapparel.net" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200 transition-colors"
+            >
+              Visit site <ArrowRight size={14} />
+            </a>
+          </TiltCard>
         </div>
       </Section>
 
