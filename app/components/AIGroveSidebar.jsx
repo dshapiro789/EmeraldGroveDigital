@@ -402,7 +402,7 @@ function HelpTab() {
     },
     { 
       q: "What models are available?", 
-      a: "We offer Claude 3.5 Sonnet, GPT-4, Gemini Pro, and more cutting-edge AI models."
+      a: "We offer Claude 3.5 Sonnet, GPT-4, Grok 4, and more cutting-edge AI models."
     },
     { 
       q: "Is my data secure?", 
@@ -432,9 +432,9 @@ function HelpTab() {
 
       <div className="mt-6 p-3 bg-emerald-800/20 rounded-lg border border-emerald-600/20">
         <p className="text-xs text-emerald-400/70">
-          Need more help? Contact us at{' '}
-          <a href="mailto:support@emeraldgrove.ai" className="text-emerald-400 hover:text-emerald-300">
-            support@emeraldgrove.ai
+          Need more help? Email us at{' '}
+          <a href="mailto:contact@emeraldgrove.com" className="text-emerald-400 hover:text-emerald-300">
+            contact@emeraldgrove.com
           </a>
         </p>
       </div>
