@@ -129,12 +129,18 @@ const MatrixLandingPage = () => {
            Change the animation duration to adjust glitch speed
            Lower = faster glitches (e.g., 1s), Higher = slower glitches (e.g., 6s)
            Default was 2s, now set to 4s for slower, more subtle glitching */
+        .glitch-text {
+          display: inline-block;
+        }
+        
         .glitch-text::before {
           content: attr(data-text);
           position: absolute;
-          left: 2px;
-          text-shadow: -2px 0 #ff00de;
+          left: 0;
           top: 0;
+          width: 100%;
+          height: 100%;
+          text-shadow: -2px 0 #ff00de;
           color: #34d399;
           overflow: hidden;
           animation: glitch 4s infinite;
@@ -310,14 +316,27 @@ const MatrixLandingPage = () => {
           transition={{ duration: 1, delay: 1 }}
           className="mb-8"
         >
-          <h1
-            className="text-5xl md:text-7xl font-extrabold mb-6 text-white relative glitch-text"
-            data-text="INITIALIZING SYSTEM"
-            style={{
-              textShadow: '0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3)',
-            }}
-          >
-            INITIALIZING SYSTEM
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white max-w-[600px] mx-auto">
+            <div className="flex flex-col items-center">
+              <span
+                className="relative glitch-text whitespace-nowrap"
+                data-text="INITIALIZING"
+                style={{
+                  textShadow: '0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3)',
+                }}
+              >
+                INITIALIZING
+              </span>
+              <span
+                className="relative glitch-text whitespace-nowrap"
+                data-text="SYSTEM"
+                style={{
+                  textShadow: '0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3)',
+                }}
+              >
+                SYSTEM
+              </span>
+            </div>
           </h1>
 
           {/* Digital Line */}
