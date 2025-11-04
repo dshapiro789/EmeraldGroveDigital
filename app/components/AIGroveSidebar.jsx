@@ -349,19 +349,20 @@ function ChatTab() {
 }
 
 // ============================================================================
-// NAVIGATION TAB
+// NAVIGATION TAB - Global Site Navigation
 // ============================================================================
 function NavigationTab({ onClose }) {
-  const sections = [
-    { id: 'hero', label: 'Welcome', icon: Leaf },
-    { id: 'features', label: 'Features', icon: Sparkles },
-    { id: 'models', label: 'AI Models', icon: Zap },
-    { id: 'playground', label: 'Try It Now', icon: Code },
-    { id: 'security', label: 'Security', icon: Shield },
+  const pages = [
+    { path: '/', label: 'Matrix Landing', icon: Sparkles, description: 'Main entrance' },
+    { path: '/main', label: 'Overview', icon: Leaf, description: 'Company overview' },
+    { path: '/ai-playground', label: 'AI Playground', icon: Code, description: 'Try our AI models' },
+    { path: '/solutions', label: 'Solutions', icon: Zap, description: 'Our AI solutions', disabled: true },
+    { path: '/security', label: 'Security', icon: Shield, description: 'Trust & security', disabled: true },
   ];
 
-  const scrollToSection = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const handleNavigation = (path, disabled) => {
+    if (disabled) return;
+    window.location.href = path;
     onClose();
   };
 
@@ -371,18 +372,52 @@ function NavigationTab({ onClose }) {
       animate={{ opacity: 1, x: 0 }}
       className="p-4 space-y-2"
     >
-      <p className="text-xs text-emerald-400/70 mb-4">Quick navigation to page sections</p>
-      {sections.map((section) => (
+      <p className="text-xs text-emerald-400/70 mb-4">Site Navigation</p>
+      {pages.map((page) => (
         <button
-          key={section.id}
-          onClick={() => scrollToSection(section.id)}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-emerald-800/30 transition-colors text-left group"
+          key={page.path}
+          onClick={() => handleNavigation(page.path, page.disabled)}
+          disabled={page.disabled}
+          className={`w-full flex items-start gap-3 px-3 py-2.5 rounded-lg transition-colors text-left group ${
+            page.disabled 
+              ? 'opacity-40 cursor-not-allowed' 
+              : 'hover:bg-emerald-800/30'
+          }`}
         >
-          <section.icon size={16} className="text-emerald-500" />
-          <span className="text-sm text-emerald-100">{section.label}</span>
-          <ArrowRight size={14} className="ml-auto text-emerald-600 group-hover:text-emerald-400 transition-colors" />
+          <page.icon size={16} className="text-emerald-500 mt-0.5 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="text-sm text-emerald-100 flex items-center gap-2">
+              {page.label}
+              {page.disabled && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-700/30 text-emerald-400">
+                  Soon
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-emerald-400/60 mt-0.5">{page.description}</p>
+          </div>
+          {!page.disabled && (
+            <ArrowRight size={14} className="text-emerald-600 group-hover:text-emerald-400 transition-colors mt-0.5 flex-shrink-0" />
+          )}
         </button>
       ))}
+      
+      {/* Divider */}
+      <div className="my-4 h-px bg-emerald-700/30" />
+      
+      {/* Quick Actions */}
+      <div className="space-y-2">
+        <p className="text-xs text-emerald-400/50 mb-2">Quick Actions</p>
+        <a
+          href="mailto:contact@emeraldgrove.com"
+          onClick={onClose}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-emerald-800/30 transition-colors text-left group"
+        >
+          <MessageCircle size={16} className="text-emerald-500" />
+          <span className="text-sm text-emerald-100">Contact Us</span>
+          <ArrowRight size={14} className="ml-auto text-emerald-600 group-hover:text-emerald-400 transition-colors" />
+        </a>
+      </div>
     </motion.div>
   );
 }
