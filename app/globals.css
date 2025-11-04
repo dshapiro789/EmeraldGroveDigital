@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: transparent; /* Mesh gradient component handles the background */
+  cursor: none; /* Hide default cursor for custom trail effect */
+}
+
+/* Show default cursor on interactive elements for accessibility */
+a, button, input, textarea, select {
+  cursor: pointer;
+}
+
+/* Optional: Add smooth cursor transition for devices that support it */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none;
+  }
+  a, button, input, textarea, select, [role="button"] {
+    cursor: none;
+  }
+}
