@@ -689,8 +689,12 @@ export default function Page() {
       {/* HEADER */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-emerald-950/80 border-b border-emerald-300/10">
         <div className="container mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Leaf className="text-emerald-300" size={20} />
+          <div className="flex items-center gap-3">
+            <img 
+              src="/logo.png" 
+              alt="Emerald Grove Digital Logo" 
+              className="w-[75px] h-[75px] object-contain"
+            />
             <span className="font-semibold tracking-wide">Emerald Grove Digital</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">

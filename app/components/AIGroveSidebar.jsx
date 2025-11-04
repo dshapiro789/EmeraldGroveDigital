@@ -76,8 +76,12 @@ export function AIGroveSidebar() {
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-emerald-700/30">
-                <div className="flex items-center gap-2">
-                  <Leaf className="text-emerald-400" size={20} />
+                <div className="flex items-center gap-3">
+                  <img 
+                    src="/logo.png" 
+                    alt="Emerald Grove Digital Logo" 
+                    className="w-[50px] h-[50px] object-contain"
+                  />
                   <h2 className="font-semibold text-emerald-100">Emerald Grove</h2>
                 </div>
                 <button
