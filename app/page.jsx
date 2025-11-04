@@ -194,7 +194,7 @@ const MatrixLandingPage = () => {
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 text-center"
+        className="relative z-20 min-h-screen flex flex-col items-center justify-center px-4 text-center"
         animate={isExiting ? {
           opacity: 0,
           scale: 0.98,
@@ -397,7 +397,7 @@ const MatrixLandingPage = () => {
           initial={{ opacity: 0, x: -20, filter: 'blur(5px)' }}
           animate={{ opacity: 1, x: 0, filter: 'blur(0)' }}
           transition={{ duration: 1, delay: 2 }}
-          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col md:flex-row gap-4 md:gap-8 font-mono text-sm text-emerald-400"
+          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col md:flex-row gap-4 md:gap-8 font-mono text-sm text-emerald-400 z-[5]"
         >
           {['SYSTEM READY', 'CONNECTION SECURE', 'AI ONLINE'].map((status, i) => (
             <div key={status} className="flex items-center gap-2">
