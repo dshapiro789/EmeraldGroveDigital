@@ -693,9 +693,15 @@ export default function Page() {
             <img 
               src="/logo.png" 
               alt="Emerald Grove Digital Logo" 
-              className="w-[75px] h-[75px] object-contain"
+              className="w-[50px] h-[50px] object-contain"
             />
-            <span className="font-semibold tracking-wide">Emerald Grove Digital</span>
+            <span className="font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-emerald-400 to-amber-300" 
+                  style={{
+                    textShadow: '0 0 20px rgba(52, 211, 153, 0.3)',
+                    filter: 'drop-shadow(0 0 10px rgba(52, 211, 153, 0.2))',
+                  }}>
+              Emerald Grove Digital
+            </span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#about" onClick={(e) => handleNavClick(e, "about")} className="hover:text-emerald-200">

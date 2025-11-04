@@ -82,7 +82,13 @@ export function AIGroveSidebar() {
                     alt="Emerald Grove Digital Logo" 
                     className="w-[50px] h-[50px] object-contain"
                   />
-                  <h2 className="font-semibold text-emerald-100">Emerald Grove</h2>
+                  <h2 className="font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-emerald-400"
+                      style={{
+                        textShadow: '0 0 15px rgba(52, 211, 153, 0.4)',
+                        filter: 'drop-shadow(0 0 8px rgba(52, 211, 153, 0.3))',
+                      }}>
+                    Emerald Grove Digital
+                  </h2>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
