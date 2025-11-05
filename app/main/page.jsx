@@ -976,10 +976,10 @@ export default function Page() {
       </Section>
 
       {/* FOOTER */}
-      <footer className="relative border-t border-emerald-300/10 py-10 z-10">
-        <div className="container mx-auto max-w-6xl px-4 text-sm text-emerald-200 flex items-center justify-between">
-          <span>© {new Date().getFullYear()} Emerald Grove Digital</span>
-          <a id="ai" href="#" className="hover:text-emerald-100 transition-colors">
+      <footer className="relative border-t border-emerald-300/20 py-10 z-50 bg-emerald-950/60 backdrop-blur-sm">
+        <div className="container mx-auto max-w-6xl px-4 text-sm text-emerald-100 flex items-center justify-between">
+          <span className="font-medium">© {new Date().getFullYear()} Emerald Grove Digital</span>
+          <a id="ai" href="#" className="hover:text-emerald-50 transition-colors font-medium">
             Terms · Privacy
           </a>
         </div>
