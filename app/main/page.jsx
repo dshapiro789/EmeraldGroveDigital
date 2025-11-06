@@ -680,10 +680,30 @@ export default function Page() {
       
       {/* Mesh Gradient Background */}
       <MeshGradientElegant />
-      
+
+      {/* Matrix Grid Overlay - Global */}
+      <motion.div
+        className="fixed inset-0 z-[1] pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(52, 211, 153, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(52, 211, 153, 0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+        }}
+        animate={{
+          opacity: [0.15, 0.25, 0.15],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+
       {/* Enhanced floating particles effect with emerald, amber, and sparkle variations */}
       <EnhancedParticles />
-      
+
       <CursorTrail />
 
       {/* HEADER */}
@@ -771,26 +791,6 @@ export default function Page() {
           <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-96 w-[120vw] bg-gradient-to-b from-emerald-300/10 via-emerald-400/10 to-transparent blur-3xl" />
           <div className="absolute -inset-20 bg-[radial-gradient(40%_40%_at_70%_10%,rgba(193,162,74,0.12),transparent)]" />
         </div>
-
-        {/* Matrix Grid Overlay */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(52, 211, 153, 0.15) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(52, 211, 153, 0.15) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px',
-          }}
-          animate={{
-            opacity: [0.1, 0.2, 0.1],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
 
         {/* Floating accent shapes - static */}
         <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-400/5 blur-3xl pointer-events-none" />
@@ -976,10 +976,10 @@ export default function Page() {
       </Section>
 
       {/* FOOTER */}
-      <footer className="border-t border-emerald-300/10 py-10">
-        <div className="container mx-auto max-w-6xl px-4 text-sm text-emerald-300/70 flex items-center justify-between">
-          <span>© {new Date().getFullYear()} Emerald Grove Digital</span>
-          <a id="ai" href="#" className="hover:text-emerald-200">
+      <footer className="relative border-t border-emerald-300/20 py-10 z-50 bg-emerald-950/60 backdrop-blur-sm">
+        <div className="container mx-auto max-w-6xl px-4 text-sm text-emerald-100 flex items-center justify-between">
+          <span className="font-medium">© {new Date().getFullYear()} Emerald Grove Digital</span>
+          <a id="ai" href="#" className="hover:text-emerald-50 transition-colors font-medium">
             Terms · Privacy
           </a>
         </div>
