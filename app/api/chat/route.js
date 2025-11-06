@@ -39,13 +39,34 @@ export async function POST(request) {
     // ============================================================================
     // VALIDATE REQUEST
     // ============================================================================
-    const { messages, model, stream = false } = await request.json();
+    const {
+      messages,
+      model,
+      stream = false,
+      temperature = 0.7,
+      max_tokens = 4000,
+      system_prompt = null
+    } = await request.json();
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
         { error: 'Invalid messages format' },
         { status: 400, headers }
       );
+    }
+
+    // Validate temperature range
+    const validatedTemperature = Math.max(0, Math.min(2, temperature));
+    // Validate max_tokens range
+    const validatedMaxTokens = Math.max(100, Math.min(4000, max_tokens));
+
+    // Prepare messages with optional system prompt
+    let finalMessages = messages;
+    if (system_prompt && system_prompt.trim()) {
+      finalMessages = [
+        { role: 'system', content: system_prompt.trim() },
+        ...messages
+      ];
     }
 
     const apiKey = process.env.OPENROUTER_API_KEY;
@@ -73,9 +94,9 @@ export async function POST(request) {
         },
         body: JSON.stringify({
           model: model || 'anthropic/claude-3.5-sonnet',
-          messages: messages,
-          temperature: 0.7,
-          max_tokens: 4000,
+          messages: finalMessages,
+          temperature: validatedTemperature,
+          max_tokens: validatedMaxTokens,
           stream: true
         })
       });
@@ -188,9 +209,9 @@ export async function POST(request) {
       },
       body: JSON.stringify({
         model: model || 'anthropic/claude-3.5-sonnet',
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 4000
+        messages: finalMessages,
+        temperature: validatedTemperature,
+        max_tokens: validatedMaxTokens
       })
     });
 
