@@ -681,26 +681,6 @@ export default function Page() {
       {/* Mesh Gradient Background */}
       <MeshGradientElegant />
 
-      {/* Matrix Grid Overlay - Global */}
-      <motion.div
-        className="fixed inset-0 z-[1] pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(52, 211, 153, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(52, 211, 153, 0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px',
-        }}
-        animate={{
-          opacity: [0.15, 0.25, 0.15],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-      />
-
       {/* Enhanced floating particles effect with emerald, amber, and sparkle variations */}
       <EnhancedParticles />
 

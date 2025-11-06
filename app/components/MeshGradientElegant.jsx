@@ -20,8 +20,8 @@ const MeshGradientElegant = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-      {/* Deep emerald base with gradient */}
-      <div className="absolute inset-0 bg-[#041712]" />
+      {/* Darker deep emerald base with gradient */}
+      <div className="absolute inset-0 bg-[#021008]" />
       
       <motion.div 
         className="absolute inset-0"
