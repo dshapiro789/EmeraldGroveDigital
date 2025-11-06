@@ -686,15 +686,15 @@ export default function Page() {
         className="fixed inset-0 z-[1] pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(52, 211, 153, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(52, 211, 153, 0.3) 1px, transparent 1px)
+            linear-gradient(rgba(52, 211, 153, 0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(52, 211, 153, 0.15) 1px, transparent 1px)
           `,
           backgroundSize: '50px 50px',
           maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
           WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
         }}
         animate={{
-          opacity: [0.15, 0.25, 0.15],
+          opacity: [0.08, 0.13, 0.08],
         }}
         transition={{
           duration: 4,
