@@ -53,40 +53,40 @@ const AI_MODELS = [
     color: "emerald"
   },
   {
-    id: "openai/gpt-4-turbo",
-    name: "GPT-4 Turbo",
+    id: "openai/gpt-4o",
+    name: "GPT-4o",
     provider: "OpenAI",
     icon: Zap,
-    description: "Fast and capable",
+    description: "Fast multimodal model",
     supportsVision: true,
     color: "amber"
   },
   {
-    id: "openai/gpt-4",
-    name: "GPT-4",
+    id: "openai/gpt-4-vision-preview",
+    name: "GPT-4 Vision",
     provider: "OpenAI",
-    icon: Brain,
-    description: "Advanced reasoning",
-    supportsVision: false,
+    icon: Eye,
+    description: "Specialized vision model",
+    supportsVision: true,
     color: "amber"
   },
   {
-    id: "x-ai/grok-vision-beta",
-    name: "Grok Vision",
-    provider: "xAI",
-    icon: Sparkles,
-    description: "Vision-enabled fast model",
-    supportsVision: true,
-    color: "blue"
-  },
-  {
-    id: "google/gemini-2.0-flash-exp:free",
+    id: "google/gemini-2.0-flash-001",
     name: "Gemini 2.0 Flash",
     provider: "Google",
     icon: MessageCircle,
-    description: "Latest vision-capable model",
+    description: "Fast multimodal understanding",
     supportsVision: true,
     color: "purple"
+  },
+  {
+    id: "meta-llama/llama-3.2-90b-vision-instruct",
+    name: "Llama 3.2 Vision",
+    provider: "Meta",
+    icon: Sparkles,
+    description: "Open source vision model",
+    supportsVision: true,
+    color: "blue"
   }
 ];
 
@@ -1829,7 +1829,12 @@ export default function AIPlayground() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to get response');
+        console.error('=== API Error Response ===');
+        console.error('Status:', response.status);
+        console.error('Error data:', errorData);
+        const errorMessage = errorData.message || errorData.error || 'Failed to get response';
+        const detailsMessage = errorData.details ? `\n\nDetails: ${JSON.stringify(errorData.details, null, 2)}` : '';
+        throw new Error(errorMessage + detailsMessage);
       }
 
       if (settings.streaming) {

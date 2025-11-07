@@ -84,6 +84,21 @@ export async function POST(request) {
     // ============================================================================
     if (stream) {
       const encoder = new TextEncoder();
+
+      // Log request details for debugging
+      const requestBody = {
+        model: model || 'anthropic/claude-3.5-sonnet',
+        messages: finalMessages,
+        temperature: validatedTemperature,
+        max_tokens: validatedMaxTokens,
+        stream: true
+      };
+
+      console.log('=== OpenRouter API Request (Streaming) ===');
+      console.log('Model:', requestBody.model);
+      console.log('Messages count:', requestBody.messages.length);
+      console.log('Messages structure:', JSON.stringify(requestBody.messages, null, 2).substring(0, 500) + '...');
+
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -92,17 +107,14 @@ export async function POST(request) {
           'X-Title': 'Emerald Grove AI Playground',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          model: model || 'anthropic/claude-3.5-sonnet',
-          messages: finalMessages,
-          temperature: validatedTemperature,
-          max_tokens: validatedMaxTokens,
-          stream: true
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error('=== OpenRouter API Error (Streaming) ===');
+        console.error('Status:', response.status);
+        console.error('Error details:', JSON.stringify(errorData, null, 2));
         return NextResponse.json(
           { error: 'Failed to get AI response', details: errorData },
           { status: response.status, headers }
@@ -199,6 +211,18 @@ export async function POST(request) {
     // ============================================================================
     // NON-STREAMING RESPONSE
     // ============================================================================
+    const requestBody = {
+      model: model || 'anthropic/claude-3.5-sonnet',
+      messages: finalMessages,
+      temperature: validatedTemperature,
+      max_tokens: validatedMaxTokens
+    };
+
+    console.log('=== OpenRouter API Request (Non-Streaming) ===');
+    console.log('Model:', requestBody.model);
+    console.log('Messages count:', requestBody.messages.length);
+    console.log('Messages structure:', JSON.stringify(requestBody.messages, null, 2).substring(0, 500) + '...');
+
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -207,17 +231,14 @@ export async function POST(request) {
         'X-Title': 'Emerald Grove AI Playground',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: model || 'anthropic/claude-3.5-sonnet',
-        messages: finalMessages,
-        temperature: validatedTemperature,
-        max_tokens: validatedMaxTokens
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('OpenRouter API error:', errorData);
+      console.error('=== OpenRouter API Error (Non-Streaming) ===');
+      console.error('Status:', response.status);
+      console.error('Error details:', JSON.stringify(errorData, null, 2));
       return NextResponse.json(
         { error: 'Failed to get AI response', details: errorData },
         { status: response.status, headers }
