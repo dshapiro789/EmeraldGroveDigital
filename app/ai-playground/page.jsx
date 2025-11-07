@@ -1608,24 +1608,30 @@ function RichTextInput({
       {/* Emoji Picker */}
       <AnimatePresence>
         {showEmoji && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute bottom-full left-0 mb-2 z-50"
-          >
-            <div className="bg-emerald-950/95 backdrop-blur-xl border border-emerald-300/20 rounded-lg shadow-2xl">
-              <EmojiPicker
-                onEmojiClick={(emojiData) => {
-                  onEmojiSelect(emojiData.emoji);
-                  onToggleEmoji();
-                }}
-                theme="dark"
-                width={300}
-                height={400}
-              />
-            </div>
-          </motion.div>
+          <>
+            <div
+              className="fixed inset-0 z-40"
+              onClick={onToggleEmoji}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="absolute bottom-full left-0 mb-2 z-50"
+            >
+              <div className="bg-emerald-950/95 backdrop-blur-xl border border-emerald-300/20 rounded-lg shadow-2xl overflow-hidden">
+                <EmojiPicker
+                  onEmojiClick={(emojiData) => {
+                    onEmojiSelect(emojiData.emoji);
+                    onToggleEmoji();
+                  }}
+                  theme="dark"
+                  width={300}
+                  height={400}
+                />
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
@@ -1637,7 +1643,7 @@ function RichTextInput({
         onKeyDown={handleKeyDown}
         placeholder="Message AI... (type / for commands)"
         rows={1}
-        className="w-full px-5 py-4 pr-36 bg-transparent resize-none focus:outline-none text-emerald-50 placeholder-emerald-400/40 max-h-40"
+        className="w-full px-5 py-4 pr-36 bg-transparent resize-none focus:outline-none text-emerald-50 placeholder-emerald-400/40 max-h-40 overflow-y-auto"
         disabled={disabled}
       />
 
@@ -1735,9 +1741,15 @@ export default function AIPlayground() {
     const messageContent = customInput || input.trim();
     if (!messageContent || isLoading) return;
 
+    // Add image context to message if images are uploaded
+    let enhancedContent = messageContent;
+    if (images.length > 0) {
+      enhancedContent = `[User uploaded ${images.length} image${images.length > 1 ? 's' : ''} with this message]\n\n${messageContent}`;
+    }
+
     const userMessage = {
       role: 'user',
-      content: messageContent,
+      content: messageContent, // Original content for display
       images: images.length > 0 ? images : undefined
     };
 
@@ -1754,10 +1766,12 @@ export default function AIPlayground() {
     setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
     try {
-      // Strip images from messages before sending to API (API doesn't support images yet)
+      // Prepare messages for API - include image context for AI awareness
       const cleanMessages = [...messages, userMessage].map(msg => ({
         role: msg.role,
-        content: msg.content
+        content: msg.images && msg.images.length > 0
+          ? `[User uploaded ${msg.images.length} image${msg.images.length > 1 ? 's' : ''} with this message]\n\n${msg.content}`
+          : msg.content
       }));
 
       const response = await fetch('/api/chat', {
@@ -2084,7 +2098,7 @@ export default function AIPlayground() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="relative bg-emerald-950/50 backdrop-blur-xl border border-emerald-300/20 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="relative bg-emerald-950/50 backdrop-blur-xl border border-emerald-300/20 rounded-2xl shadow-2xl overflow-visible">
               <RichTextInput
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -2101,7 +2115,7 @@ export default function AIPlayground() {
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="absolute right-3 bottom-3 p-2.5 rounded-lg bg-emerald-500 text-emerald-950 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="absolute right-3 bottom-3 p-2.5 rounded-lg bg-emerald-500 text-emerald-950 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all z-10"
               >
                 {isLoading ? (
                   <Loader2 size={18} className="animate-spin" />
