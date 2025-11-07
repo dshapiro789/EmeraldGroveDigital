@@ -1912,7 +1912,7 @@ export default function AIPlayground() {
             </div>
 
             <div className="flex items-center gap-3">
-              <ModelSelector selectedModel={selectedModel} onSelect={setSelectedModel} hasImages={hasImages} />
+              <ModelSelector selectedModel={selectedModel} onSelect={setSelectedModel} />
               <button onClick={() => setShowPromptLibrary(true)} className="p-2 rounded-lg bg-emerald-900/30 border border-emerald-300/20 hover:bg-emerald-800/40 transition-colors" title="Templates">
                 <BookOpen size={16} />
               </button>
