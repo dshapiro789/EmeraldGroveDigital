@@ -53,40 +53,40 @@ const AI_MODELS = [
     color: "emerald"
   },
   {
-    id: "openai/gpt-4-turbo",
-    name: "GPT-4 Turbo",
+    id: "openai/gpt-4o",
+    name: "GPT-4o",
     provider: "OpenAI",
     icon: Zap,
-    description: "Fast and capable",
+    description: "Fast multimodal model",
     supportsVision: true,
     color: "amber"
   },
   {
-    id: "openai/gpt-4",
-    name: "GPT-4",
+    id: "openai/gpt-4-vision-preview",
+    name: "GPT-4 Vision",
     provider: "OpenAI",
-    icon: Brain,
-    description: "Advanced reasoning",
-    supportsVision: false,
+    icon: Eye,
+    description: "Specialized vision model",
+    supportsVision: true,
     color: "amber"
   },
   {
-    id: "x-ai/grok-vision-beta",
-    name: "Grok Vision",
-    provider: "xAI",
-    icon: Sparkles,
-    description: "Vision-enabled fast model",
-    supportsVision: true,
-    color: "blue"
-  },
-  {
-    id: "google/gemini-2.0-flash-exp:free",
+    id: "google/gemini-2.0-flash-001",
     name: "Gemini 2.0 Flash",
     provider: "Google",
     icon: MessageCircle,
-    description: "Latest vision-capable model",
+    description: "Fast multimodal understanding",
     supportsVision: true,
     color: "purple"
+  },
+  {
+    id: "meta-llama/llama-3.2-90b-vision-instruct",
+    name: "Llama 3.2 Vision",
+    provider: "Meta",
+    icon: Sparkles,
+    description: "Open source vision model",
+    supportsVision: true,
+    color: "blue"
   }
 ];
 
@@ -915,15 +915,11 @@ function PromptLibrary({ isOpen, onClose, onSelectTemplate }) {
 // ============================================================================
 // MODEL SELECTOR COMPONENT
 // ============================================================================
-function ModelSelector({ selectedModel, onSelect, hasImages }) {
+function ModelSelector({ selectedModel, onSelect }) {
   const [isOpen, setIsOpen] = useState(false);
   const currentModel = AI_MODELS.find(m => m.id === selectedModel);
   const Icon = currentModel?.icon || Brain;
-
-  // Filter models based on whether we have images
-  const availableModels = hasImages
-    ? AI_MODELS.filter(m => m.supportsVision)
-    : AI_MODELS;
+  const availableModels = AI_MODELS;
 
   return (
     <div className="relative w-full sm:w-auto">
@@ -934,7 +930,6 @@ function ModelSelector({ selectedModel, onSelect, hasImages }) {
         <div className="flex items-center gap-2">
           <Icon size={16} className="text-emerald-400" />
           <span className="text-sm font-medium">{currentModel?.name || "Select Model"}</span>
-          {hasImages && <ImageIcon size={12} className="text-emerald-400" title="Vision mode" />}
         </div>
         <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -953,14 +948,6 @@ function ModelSelector({ selectedModel, onSelect, hasImages }) {
               className="absolute top-full mt-2 left-0 right-0 sm:left-auto sm:right-0 sm:w-80 bg-emerald-950/95 backdrop-blur-xl border border-emerald-300/20 rounded-lg shadow-2xl z-50 overflow-hidden"
             >
               <div className="p-2 space-y-1 max-h-96 overflow-y-auto">
-                {hasImages && (
-                  <div className="px-3 py-2 text-xs text-emerald-400/80 border-b border-emerald-300/10 mb-2">
-                    <div className="flex items-center gap-1">
-                      <ImageIcon size={12} />
-                      <span>Vision-capable models only</span>
-                    </div>
-                  </div>
-                )}
                 {availableModels.map((model) => {
                   const ModelIcon = model.icon;
                   return (
@@ -981,7 +968,6 @@ function ModelSelector({ selectedModel, onSelect, hasImages }) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-sm">{model.name}</span>
-                            {model.supportsVision && <ImageIcon size={10} className="text-emerald-400/60" />}
                             {model.id === selectedModel && (
                               <Check size={14} className="text-emerald-400" />
                             )}
@@ -1111,20 +1097,6 @@ function Message({ message, isLast, isStreaming, onRegenerate, onEdit, followUpS
               <div className={`inline-block px-4 py-3 rounded-2xl ${
                 isUser ? 'bg-emerald-500/20 border border-emerald-400/30' : 'bg-emerald-900/30 border border-emerald-300/10'
               }`}>
-                {/* Show images if present */}
-                {message.images && message.images.length > 0 && (
-                  <div className="flex gap-2 mb-3 flex-wrap">
-                    {message.images.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt={`Upload ${idx + 1}`}
-                        className="rounded-lg max-w-xs h-auto border border-emerald-300/20"
-                      />
-                    ))}
-                  </div>
-                )}
-
                 {isUser ? (
                   <p className="text-emerald-100 whitespace-pre-wrap leading-relaxed">
                     {message.content}
@@ -1474,14 +1446,7 @@ function RichTextInput({
   value,
   onChange,
   onSubmit,
-  disabled,
-  showEmoji,
-  onToggleEmoji,
-  onEmojiSelect,
-  images,
-  onImagesChange,
-  showImageUpload,
-  setShowImageUpload
+  disabled
 }) {
   const textareaRef = useRef(null);
   const [showSlashMenu, setShowSlashMenu] = useState(false);
@@ -1562,11 +1527,6 @@ function RichTextInput({
 
   return (
     <div className="relative">
-      {/* Image Upload Section */}
-      {showImageUpload && (
-        <ImageUploadSection images={images} onImagesChange={onImagesChange} />
-      )}
-
       {/* Slash Command Menu */}
       {showSlashMenu && (
         <>
@@ -1605,30 +1565,6 @@ function RichTextInput({
         </>
       )}
 
-      {/* Emoji Picker */}
-      <AnimatePresence>
-        {showEmoji && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute bottom-full left-0 mb-2 z-50"
-          >
-            <div className="bg-emerald-950/95 backdrop-blur-xl border border-emerald-300/20 rounded-lg shadow-2xl">
-              <EmojiPicker
-                onEmojiClick={(emojiData) => {
-                  onEmojiSelect(emojiData.emoji);
-                  onToggleEmoji();
-                }}
-                theme="dark"
-                width={300}
-                height={400}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Main Textarea */}
       <textarea
         ref={textareaRef}
@@ -1637,33 +1573,9 @@ function RichTextInput({
         onKeyDown={handleKeyDown}
         placeholder="Message AI... (type / for commands)"
         rows={1}
-        className="w-full px-5 py-4 pr-28 bg-transparent resize-none focus:outline-none text-emerald-50 placeholder-emerald-400/40 max-h-40"
+        className="w-full px-5 py-4 pr-20 bg-transparent resize-none focus:outline-none text-emerald-50 placeholder-emerald-400/40 max-h-40 overflow-y-auto"
         disabled={disabled}
       />
-
-      {/* Action Buttons */}
-      <div className="absolute right-3 bottom-3 flex items-center gap-1">
-        <button
-          type="button"
-          onClick={() => setShowImageUpload(!showImageUpload)}
-          className={`p-2 rounded-lg transition-colors ${
-            showImageUpload || images.length > 0
-              ? 'bg-emerald-500/20 text-emerald-400'
-              : 'hover:bg-emerald-900/40 text-emerald-300'
-          }`}
-          title="Add images"
-        >
-          <ImageIcon size={18} />
-        </button>
-        <button
-          type="button"
-          onClick={onToggleEmoji}
-          className="p-2 rounded-lg hover:bg-emerald-900/40 transition-colors"
-          title="Add emoji"
-        >
-          <Smile size={18} className="text-emerald-300" />
-        </button>
-      </div>
     </div>
   );
 }
@@ -1674,7 +1586,6 @@ function RichTextInput({
 export default function AIPlayground() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [selectedModel, setSelectedModel] = useState(AI_MODELS[0].id);
@@ -1682,8 +1593,6 @@ export default function AIPlayground() {
   const [showPromptLibrary, setShowPromptLibrary] = useState(false);
   const [showPersonas, setShowPersonas] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [showEmoji, setShowEmoji] = useState(false);
-  const [showImageUpload, setShowImageUpload] = useState(false);
   const [settings, setSettings] = useState({
     temperature: 0.7,
     maxTokens: 4000,
@@ -1737,14 +1646,11 @@ export default function AIPlayground() {
 
     const userMessage = {
       role: 'user',
-      content: messageContent,
-      images: images.length > 0 ? images : undefined
+      content: messageContent
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
-    setImages([]);
-    setShowImageUpload(false);
     setIsLoading(true);
     setIsStreaming(settings.streaming);
     setFollowUpSuggestions([]);
@@ -1754,11 +1660,17 @@ export default function AIPlayground() {
     setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
     try {
+      // Prepare messages for API - simple text-only format
+      const apiMessages = [...messages, userMessage].map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage],
+          messages: apiMessages,
           model: selectedModel,
           stream: settings.streaming,
           temperature: settings.temperature,
@@ -1780,7 +1692,12 @@ export default function AIPlayground() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to get response');
+        console.error('=== API Error Response ===');
+        console.error('Status:', response.status);
+        console.error('Error data:', errorData);
+        const errorMessage = errorData.message || errorData.error || 'Failed to get response';
+        const detailsMessage = errorData.details ? `\n\nDetails: ${JSON.stringify(errorData.details, null, 2)}` : '';
+        throw new Error(errorMessage + detailsMessage);
       }
 
       if (settings.streaming) {
@@ -1897,13 +1814,8 @@ export default function AIPlayground() {
     setInput(template);
   };
 
-  const handleEmojiSelect = (emoji) => {
-    setInput(prev => prev + emoji);
-  };
-
   const charCount = input.length;
   const charLimit = 4000;
-  const hasImages = images.length > 0 || messages.some(m => m.images);
 
   return (
     <div className="relative min-h-screen bg-[#041712] text-emerald-50">
@@ -1963,14 +1875,13 @@ export default function AIPlayground() {
                 <span className="text-sm font-medium">Back</span>
               </a>
               <div className="flex items-center gap-2">
-                <span className="text-xl">{currentPersona.icon}</span>
                 <Sparkles size={18} className="text-emerald-400" />
                 <h1 className="text-base font-semibold">AI Playground</h1>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <div className="flex-1">
-                <ModelSelector selectedModel={selectedModel} onSelect={setSelectedModel} hasImages={hasImages} />
+                <ModelSelector selectedModel={selectedModel} onSelect={setSelectedModel} />
               </div>
               <button onClick={() => setShowPromptLibrary(true)} className="p-2 rounded-lg bg-emerald-900/30 border border-emerald-300/20 hover:bg-emerald-800/40 transition-colors" title="Templates">
                 <BookOpen size={16} />
@@ -1994,7 +1905,6 @@ export default function AIPlayground() {
                 <span className="text-sm font-medium">Back to Grove</span>
               </a>
               <div className="flex items-center gap-2">
-                <span className="text-2xl">{currentPersona.icon}</span>
                 <Sparkles size={20} className="text-emerald-400" />
                 <h1 className="text-lg font-semibold">AI Playground</h1>
                 <span className="text-xs text-emerald-400/60">· {currentPersona.name}</span>
@@ -2002,7 +1912,7 @@ export default function AIPlayground() {
             </div>
 
             <div className="flex items-center gap-3">
-              <ModelSelector selectedModel={selectedModel} onSelect={setSelectedModel} hasImages={hasImages} />
+              <ModelSelector selectedModel={selectedModel} onSelect={setSelectedModel} />
               <button onClick={() => setShowPromptLibrary(true)} className="p-2 rounded-lg bg-emerald-900/30 border border-emerald-300/20 hover:bg-emerald-800/40 transition-colors" title="Templates">
                 <BookOpen size={16} />
               </button>
@@ -2080,24 +1990,17 @@ export default function AIPlayground() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="relative bg-emerald-950/50 backdrop-blur-xl border border-emerald-300/20 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="relative bg-emerald-950/50 backdrop-blur-xl border border-emerald-300/20 rounded-2xl shadow-2xl overflow-visible">
               <RichTextInput
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onSubmit={handleSubmit}
                 disabled={isLoading}
-                showEmoji={showEmoji}
-                onToggleEmoji={() => setShowEmoji(!showEmoji)}
-                onEmojiSelect={handleEmojiSelect}
-                images={images}
-                onImagesChange={setImages}
-                showImageUpload={showImageUpload}
-                setShowImageUpload={setShowImageUpload}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="absolute right-3 bottom-3 p-2.5 rounded-lg bg-emerald-500 text-emerald-950 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="absolute right-3 bottom-3 p-2.5 rounded-lg bg-emerald-500 text-emerald-950 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all z-10"
               >
                 {isLoading ? (
                   <Loader2 size={18} className="animate-spin" />
