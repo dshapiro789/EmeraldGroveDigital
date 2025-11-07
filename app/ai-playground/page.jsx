@@ -1637,12 +1637,12 @@ function RichTextInput({
         onKeyDown={handleKeyDown}
         placeholder="Message AI... (type / for commands)"
         rows={1}
-        className="w-full px-5 py-4 pr-28 bg-transparent resize-none focus:outline-none text-emerald-50 placeholder-emerald-400/40 max-h-40"
+        className="w-full px-5 py-4 pr-36 bg-transparent resize-none focus:outline-none text-emerald-50 placeholder-emerald-400/40 max-h-40"
         disabled={disabled}
       />
 
-      {/* Action Buttons */}
-      <div className="absolute right-3 bottom-3 flex items-center gap-1">
+      {/* Action Buttons - Positioned to the left of the send button */}
+      <div className="absolute right-16 bottom-3 flex items-center gap-1">
         <button
           type="button"
           onClick={() => setShowImageUpload(!showImageUpload)}
@@ -1754,11 +1754,17 @@ export default function AIPlayground() {
     setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
     try {
+      // Strip images from messages before sending to API (API doesn't support images yet)
+      const cleanMessages = [...messages, userMessage].map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, userMessage],
+          messages: cleanMessages,
           model: selectedModel,
           stream: settings.streaming,
           temperature: settings.temperature,
@@ -1963,7 +1969,6 @@ export default function AIPlayground() {
                 <span className="text-sm font-medium">Back</span>
               </a>
               <div className="flex items-center gap-2">
-                <span className="text-xl">{currentPersona.icon}</span>
                 <Sparkles size={18} className="text-emerald-400" />
                 <h1 className="text-base font-semibold">AI Playground</h1>
               </div>
@@ -1994,7 +1999,6 @@ export default function AIPlayground() {
                 <span className="text-sm font-medium">Back to Grove</span>
               </a>
               <div className="flex items-center gap-2">
-                <span className="text-2xl">{currentPersona.icon}</span>
                 <Sparkles size={20} className="text-emerald-400" />
                 <h1 className="text-lg font-semibold">AI Playground</h1>
                 <span className="text-xs text-emerald-400/60">· {currentPersona.name}</span>
