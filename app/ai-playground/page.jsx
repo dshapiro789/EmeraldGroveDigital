@@ -1741,17 +1741,20 @@ export default function AIPlayground() {
     const messageContent = customInput || input.trim();
     if (!messageContent || isLoading) return;
 
-    // Add image context to message if images are uploaded
-    let enhancedContent = messageContent;
-    if (images.length > 0) {
-      enhancedContent = `[User uploaded ${images.length} image${images.length > 1 ? 's' : ''} with this message]\n\n${messageContent}`;
-    }
-
     const userMessage = {
       role: 'user',
       content: messageContent, // Original content for display
       images: images.length > 0 ? images : undefined
     };
+
+    // Auto-switch to vision model if images are uploaded and current model doesn't support vision
+    if (images.length > 0) {
+      const currentModel = AI_MODELS.find(m => m.id === selectedModel);
+      if (!currentModel?.supportsVision) {
+        // Switch to Claude 3.5 Sonnet (best vision model)
+        setSelectedModel('anthropic/claude-3.5-sonnet');
+      }
+    }
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
@@ -1766,19 +1769,45 @@ export default function AIPlayground() {
     setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
     try {
-      // Prepare messages for API - include image context for AI awareness
-      const cleanMessages = [...messages, userMessage].map(msg => ({
-        role: msg.role,
-        content: msg.images && msg.images.length > 0
-          ? `[User uploaded ${msg.images.length} image${msg.images.length > 1 ? 's' : ''} with this message]\n\n${msg.content}`
-          : msg.content
-      }));
+      // Prepare messages for API - use OpenAI vision format for images
+      const apiMessages = [...messages, userMessage].map(msg => {
+        // If message has images, use vision format (OpenAI-compatible)
+        if (msg.images && msg.images.length > 0) {
+          const contentArray = [
+            {
+              type: "text",
+              text: msg.content
+            }
+          ];
+
+          // Add each image in the correct format
+          msg.images.forEach(imageBase64 => {
+            contentArray.push({
+              type: "image_url",
+              image_url: {
+                url: imageBase64
+              }
+            });
+          });
+
+          return {
+            role: msg.role,
+            content: contentArray
+          };
+        }
+
+        // Regular text-only message
+        return {
+          role: msg.role,
+          content: msg.content
+        };
+      });
 
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: cleanMessages,
+          messages: apiMessages,
           model: selectedModel,
           stream: settings.streaming,
           temperature: settings.temperature,
