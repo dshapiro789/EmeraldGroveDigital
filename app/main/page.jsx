@@ -317,6 +317,7 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
   const ref = useRef(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -331,9 +332,14 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
     setRotateY(rotateYValue);
   };
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
   const handleMouseLeave = () => {
     setRotateX(0);
     setRotateY(0);
+    setIsHovered(false);
   };
 
   return (
@@ -345,6 +351,7 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
       viewport={{ margin: "-50px", amount: 0.3 }}
       transition={{ duration: 0.6, ease: "easeOut", delay }}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className="group relative overflow-hidden rounded-2xl border border-emerald-300/10 bg-emerald-900/30 backdrop-blur-md p-6 md:p-8"
       style={{
@@ -353,6 +360,9 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
         transition: "transform 0.1s ease-out",
       }}
     >
+      {/* Lightning Arc Effect */}
+      <LightningArc isActive={isHovered} />
+
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
         <div className="absolute -inset-40 bg-gradient-to-br from-emerald-500/10 via-emerald-400/10 to-emerald-300/10 blur-2xl" />
       </div>
@@ -411,6 +421,343 @@ function TypewriterText({ text, className = "", delay = 0 }) {
         />
       )}
     </span>
+  );
+}
+
+// ============================================================================
+// LIGHTNING ARC EFFECT
+// ============================================================================
+function LightningArc({ isActive = false }) {
+  const [arcs, setArcs] = useState([]);
+
+  useEffect(() => {
+    if (!isActive) {
+      setArcs([]);
+      return;
+    }
+
+    // Generate 3-5 random lightning arcs
+    const numArcs = Math.floor(Math.random() * 3) + 3;
+    const newArcs = Array.from({ length: numArcs }, (_, i) => {
+      const startX = Math.random() * 100;
+      const startY = i < 2 ? 0 : (i === 2 ? Math.random() * 50 : Math.random() * 100);
+      const endX = Math.random() * 100;
+      const endY = i < 2 ? 100 : (i === 2 ? Math.random() * 50 + 50 : Math.random() * 100);
+
+      // Create branching lightning path
+      const midX1 = startX + (endX - startX) * 0.3 + (Math.random() - 0.5) * 30;
+      const midY1 = startY + (endY - startY) * 0.3 + (Math.random() - 0.5) * 20;
+      const midX2 = startX + (endX - startX) * 0.6 + (Math.random() - 0.5) * 30;
+      const midY2 = startY + (endY - startY) * 0.6 + (Math.random() - 0.5) * 20;
+
+      return {
+        id: i,
+        path: `M ${startX} ${startY} Q ${midX1} ${midY1} ${(startX + endX) / 2} ${(startY + endY) / 2} Q ${midX2} ${midY2} ${endX} ${endY}`,
+        delay: i * 0.05,
+      };
+    });
+    setArcs(newArcs);
+  }, [isActive]);
+
+  if (!isActive) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+        <defs>
+          <filter id="lightningGlow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        {arcs.map((arc) => (
+          <motion.g key={arc.id}>
+            {/* Outer glow */}
+            <motion.path
+              d={arc.path}
+              stroke="#34d399"
+              strokeWidth="3"
+              fill="none"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: [0, 0.6, 0] }}
+              transition={{
+                duration: 0.3,
+                delay: arc.delay,
+                ease: "easeOut"
+              }}
+              filter="url(#lightningGlow)"
+            />
+            {/* Inner white core */}
+            <motion.path
+              d={arc.path}
+              stroke="#ffffff"
+              strokeWidth="1"
+              fill="none"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: [0, 1, 0] }}
+              transition={{
+                duration: 0.3,
+                delay: arc.delay,
+                ease: "easeOut"
+              }}
+            />
+          </motion.g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+// ============================================================================
+// PLASMA BORDER EFFECT
+// ============================================================================
+function PlasmaBorder({ children, className = "" }) {
+  return (
+    <div className={`relative ${className}`}>
+      {/* Animated plasma border */}
+      <div className="absolute -inset-[2px] rounded-2xl overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, #34d399 25%, #ffffff 50%, #34d399 75%, transparent 100%)',
+            backgroundSize: '200% 100%',
+          }}
+          animate={{
+            backgroundPosition: ['0% 0%', '200% 0%'],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+        <div
+          className="absolute inset-[2px] rounded-2xl"
+          style={{
+            background: 'linear-gradient(to bottom, rgb(6, 78, 59), rgb(4, 47, 46))',
+          }}
+        />
+      </div>
+      {/* Glow effect */}
+      <motion.div
+        className="absolute -inset-[2px] rounded-2xl pointer-events-none"
+        style={{
+          boxShadow: '0 0 20px rgba(52, 211, 153, 0.4)',
+        }}
+        animate={{
+          boxShadow: [
+            '0 0 20px rgba(52, 211, 153, 0.4)',
+            '0 0 30px rgba(52, 211, 153, 0.6)',
+            '0 0 20px rgba(52, 211, 153, 0.4)',
+          ],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      {/* Content */}
+      <div className="relative">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// LIGHTNING BUTTON - Button with lightning arc effects
+// ============================================================================
+function LightningButton({ children, className = "", href, onClick, ...props }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const Component = href ? 'a' : 'button';
+
+  return (
+    <Component
+      href={href}
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`relative inline-flex items-center gap-2 overflow-hidden ${className}`}
+      {...props}
+    >
+      {/* Lightning Arc Effect */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+        {isHovered && <LightningArc isActive={true} />}
+      </div>
+      {children}
+    </Component>
+  );
+}
+
+// ============================================================================
+// CIRCUIT BOARD TRACES - Connects service cards
+// ============================================================================
+function CircuitBoardTraces() {
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden">
+      <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+        <defs>
+          {/* Gradient for the pulse */}
+          <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#34d399" stopOpacity="0"/>
+            <stop offset="50%" stopColor="#34d399" stopOpacity="1"/>
+            <stop offset="100%" stopColor="#34d399" stopOpacity="0"/>
+          </linearGradient>
+          {/* Glow filter */}
+          <filter id="circuitGlow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Desktop: Horizontal connections between 3 cards */}
+        <g className="hidden md:block">
+          {/* Connection 1 -> 2 */}
+          <motion.path
+            d="M 33% 50% L 50% 50% L 50% 50% L 66% 50%"
+            stroke="#34d399"
+            strokeWidth="2"
+            fill="none"
+            strokeOpacity="0.3"
+            initial={{ pathLength: 0 }}
+            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
+            transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+            filter="url(#circuitGlow)"
+          />
+          {/* Pulse traveling on connection 1 -> 2 */}
+          <motion.circle
+            r="4"
+            fill="url(#pulseGradient)"
+            initial={{ offsetDistance: '0%', opacity: 0 }}
+            animate={isVisible ? {
+              offsetDistance: ['0%', '100%'],
+              opacity: [0, 1, 1, 0],
+            } : {}}
+            transition={{
+              duration: 2,
+              delay: 2,
+              repeat: Infinity,
+              repeatDelay: 3,
+              ease: "easeInOut",
+            }}
+          >
+            <animateMotion dur="2s" repeatCount="indefinite" begin="2s">
+              <mpath href="#trace1to2" />
+            </animateMotion>
+          </motion.circle>
+          <path id="trace1to2" d="M 33% 50% L 50% 50% L 50% 50% L 66% 50%" fill="none" />
+
+          {/* Connection 2 -> 3 */}
+          <motion.path
+            d="M 66% 50% L 83% 50%"
+            stroke="#34d399"
+            strokeWidth="2"
+            fill="none"
+            strokeOpacity="0.3"
+            initial={{ pathLength: 0 }}
+            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
+            transition={{ duration: 1.5, delay: 1, ease: "easeInOut" }}
+            filter="url(#circuitGlow)"
+          />
+          {/* Pulse traveling on connection 2 -> 3 */}
+          <motion.circle
+            r="4"
+            fill="#34d399"
+            initial={{ offsetDistance: '0%', opacity: 0 }}
+            animate={isVisible ? {
+              offsetDistance: ['0%', '100%'],
+              opacity: [0, 1, 1, 0],
+            } : {}}
+            transition={{
+              duration: 2,
+              delay: 2.5,
+              repeat: Infinity,
+              repeatDelay: 3,
+              ease: "easeInOut",
+            }}
+          >
+            <animateMotion dur="2s" repeatCount="indefinite" begin="2.5s">
+              <mpath href="#trace2to3" />
+            </animateMotion>
+          </motion.circle>
+          <path id="trace2to3" d="M 66% 50% L 83% 50%" fill="none" />
+
+          {/* Circuit nodes (dots at connection points) */}
+          <motion.circle
+            cx="33%" cy="50%" r="3"
+            fill="#34d399"
+            initial={{ scale: 0 }}
+            animate={isVisible ? { scale: [0, 1.5, 1] } : { scale: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            filter="url(#circuitGlow)"
+          />
+          <motion.circle
+            cx="66%" cy="50%" r="3"
+            fill="#34d399"
+            initial={{ scale: 0 }}
+            animate={isVisible ? { scale: [0, 1.5, 1] } : { scale: 0 }}
+            transition={{ duration: 0.5, delay: 1 }}
+            filter="url(#circuitGlow)"
+          />
+        </g>
+
+        {/* Mobile: Vertical connections */}
+        <g className="block md:hidden">
+          {/* Connection 1 -> 2 */}
+          <motion.path
+            d="M 50% 33% L 50% 50%"
+            stroke="#34d399"
+            strokeWidth="2"
+            fill="none"
+            strokeOpacity="0.3"
+            initial={{ pathLength: 0 }}
+            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
+            transition={{ duration: 1, delay: 0.5, ease: "easeInOut" }}
+            filter="url(#circuitGlow)"
+          />
+          {/* Connection 2 -> 3 */}
+          <motion.path
+            d="M 50% 50% L 50% 66%"
+            stroke="#34d399"
+            strokeWidth="2"
+            fill="none"
+            strokeOpacity="0.3"
+            initial={{ pathLength: 0 }}
+            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
+            transition={{ duration: 1, delay: 1, ease: "easeInOut" }}
+            filter="url(#circuitGlow)"
+          />
+        </g>
+      </svg>
+    </div>
   );
 }
 
@@ -573,80 +920,85 @@ function ContactForm() {
   };
 
   return (
-    <motion.form
+    <motion.div
       initial={{ opacity: 0, x: 30 }}
       whileInView={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 30 }}
       viewport={{ margin: "-100px", amount: 0.3 }}
       transition={{ duration: 0.7 }}
-      onSubmit={handleSubmit}
-      className="bg-emerald-900/40 backdrop-blur rounded-xl border border-emerald-300/10 p-6"
     >
-      <div className="grid grid-cols-2 gap-4">
-        <label className="col-span-2">
-          <span className="text-sm">Your name</span>
-          <input 
-            name="name"
-            value={formState.name}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2" 
-            required 
+      <PlasmaBorder>
+        <form
+          onSubmit={handleSubmit}
+          className="bg-emerald-900/40 backdrop-blur rounded-xl p-6"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <label className="col-span-2">
+              <span className="text-sm">Your name</span>
+              <input
+                name="name"
+                value={formState.name}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                required
+                disabled={isSubmitting}
+              />
+            </label>
+            <label className="col-span-2 md:col-span-1">
+              <span className="text-sm">Email</span>
+              <input
+                type="email"
+                name="email"
+                value={formState.email}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                required
+                disabled={isSubmitting}
+              />
+            </label>
+            <label className="col-span-2 md:col-span-1">
+              <span className="text-sm">Company</span>
+              <input
+                name="company"
+                value={formState.company}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                disabled={isSubmitting}
+              />
+            </label>
+            <label className="col-span-2">
+              <span className="text-sm">What are you building?</span>
+              <textarea
+                name="message"
+                value={formState.message}
+                onChange={handleChange}
+                rows={4}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                disabled={isSubmitting}
+              />
+            </label>
+          </div>
+
+          {submitStatus && (
+            <div className={`mt-4 p-3 rounded-md ${
+              submitStatus.type === 'success'
+                ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-200'
+                : 'bg-red-500/20 border border-red-500/30 text-red-200'
+            }`}>
+              {submitStatus.message}
+            </div>
+          )}
+
+          <LightningButton
+            type="submit"
             disabled={isSubmitting}
-          />
-        </label>
-        <label className="col-span-2 md:col-span-1">
-          <span className="text-sm">Email</span>
-          <input
-            type="email"
-            name="email"
-            value={formState.email}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
-            required
-            disabled={isSubmitting}
-          />
-        </label>
-        <label className="col-span-2 md:col-span-1">
-          <span className="text-sm">Company</span>
-          <input 
-            name="company"
-            value={formState.company}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2" 
-            disabled={isSubmitting}
-          />
-        </label>
-        <label className="col-span-2">
-          <span className="text-sm">What are you building?</span>
-          <textarea 
-            name="message"
-            value={formState.message}
-            onChange={handleChange}
-            rows={4} 
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2" 
-            disabled={isSubmitting}
-          />
-        </label>
-      </div>
-      
-      {submitStatus && (
-        <div className={`mt-4 p-3 rounded-md ${
-          submitStatus.type === 'success' 
-            ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-200' 
-            : 'bg-red-500/20 border border-red-500/30 text-red-200'
-        }`}>
-          {submitStatus.message}
-        </div>
-      )}
-      
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-4 inline-flex items-center gap-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-semibold px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? 'Sending...' : 'Send'} <ArrowRight size={16} />
-      </button>
-    </motion.form>
+            className="mt-4 rounded-md bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-semibold px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed z-10"
+          >
+            {isSubmitting ? 'Sending...' : 'Send'} <ArrowRight size={16} />
+          </LightningButton>
+        </form>
+      </PlasmaBorder>
+    </motion.div>
   );
 }
 
@@ -779,56 +1131,59 @@ export default function Page() {
 
         {/* Floating accent shapes - static */}
         <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-400/5 blur-3xl pointer-events-none" />
-        
+
         <div className="container mx-auto max-w-6xl px-4 py-24 md:py-36 relative">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-4xl md:text-6xl font-semibold tracking-tight text-emerald-50"
-          >
-            Where{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-100">
-              AI
-            </span>{" "}
-            meets
-            <br />
-            <TypewriterText
-              text="organic imagination"
-              className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
-              delay={800}
-            />
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-5 max-w-2xl text-emerald-100/80 leading-relaxed"
-          >
-            We cultivate intelligent products, lucid interfaces, and durable systems. Creativity, simplicity, and
-            function in perfect balance.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-8 flex flex-wrap items-center gap-3"
-          >
-            <a
-              href="#contact"
-              onClick={(e) => handleNavClick(e, "contact")}
-              className="inline-flex items-center gap-2 rounded-full px-5 py-3 bg-emerald-500 text-emerald-950 font-semibold shadow hover:bg-emerald-400"
+          {/* Plasma Border around hero content */}
+          <PlasmaBorder className="p-8 md:p-12">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-6xl font-semibold tracking-tight text-emerald-50"
             >
-              Start a project <ArrowRight size={16} />
-            </a>
-            <a
-              href="#work"
-              onClick={(e) => handleNavClick(e, "work")}
-              className="inline-flex items-center gap-2 rounded-full px-5 py-3 border border-emerald-300/20 hover:bg-emerald-800/30"
+              Where{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-100">
+                AI
+              </span>{" "}
+              meets
+              <br />
+              <TypewriterText
+                text="organic imagination"
+                className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
+                delay={800}
+              />
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mt-5 max-w-2xl text-emerald-100/80 leading-relaxed"
             >
-              View work <Play size={16} />
-            </a>
-          </motion.div>
+              We cultivate intelligent products, lucid interfaces, and durable systems. Creativity, simplicity, and
+              function in perfect balance.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="mt-8 flex flex-wrap items-center gap-3"
+            >
+              <LightningButton
+                href="#contact"
+                onClick={(e) => handleNavClick(e, "contact")}
+                className="rounded-full px-5 py-3 bg-emerald-500 text-emerald-950 font-semibold shadow hover:bg-emerald-400 z-10"
+              >
+                Start a project <ArrowRight size={16} />
+              </LightningButton>
+              <LightningButton
+                href="#work"
+                onClick={(e) => handleNavClick(e, "work")}
+                className="rounded-full px-5 py-3 border border-emerald-300/20 hover:bg-emerald-800/30 z-10"
+              >
+                View work <Play size={16} />
+              </LightningButton>
+            </motion.div>
+          </PlasmaBorder>
         </div>
       </section>
 
@@ -864,7 +1219,10 @@ export default function Page() {
 
       {/* SERVICES SECTION */}
       <Section id="services" eyebrow="Services" title="What we cultivate">
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+        <div className="relative grid md:grid-cols-3 gap-6 md:gap-8">
+          {/* Electric Circuit Board Traces */}
+          <CircuitBoardTraces />
+
           <TiltCard
             icon={Sparkles}
             title="AI Product Design"
