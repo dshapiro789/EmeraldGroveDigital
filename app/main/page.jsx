@@ -183,8 +183,11 @@ function CursorTrail() {
 // ============================================================================
 function EnhancedParticles() {
   const [windowHeight, setWindowHeight] = useState(1000);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Prevent hydration mismatch by only rendering on client
+    setMounted(true);
     setWindowHeight(window.innerHeight);
 
     const handleResize = () => {
@@ -194,6 +197,9 @@ function EnhancedParticles() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Don't render particles until mounted (prevents hydration mismatch)
+  if (!mounted) return null;
 
   // ELECTRIFIED particles with white-hot centers!
   const emeraldParticles = Array.from({ length: 15 }, (_, i) => ({
