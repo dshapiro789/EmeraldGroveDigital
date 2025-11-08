@@ -1,14 +1,28 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Send, Sparkles, Leaf, Menu, X, Settings, MessageCircle, Play, Shield, Braces, Cpu, LayoutPanelLeft } from "lucide-react";
 import AIGroveSidebar from '../components/AIGroveSidebar';
 import MeshGradientElegant from '../components/MeshGradientElegant';
 
 /**
- * Emerald Grove Digital - Enhanced Premium Version
+ * Emerald Grove Digital - FULL ELECTRIC EDITION ⚡
  * Features:
+ * - Electric sound effects system
+ * - Electric scroll progress bar with lightning
+ * - Navigation electric underline
+ * - Enhanced electric cursor trail with sparks
+ * - Form input electric focus glow
+ * - Section power-on transitions
+ * - AI Playground super-charge effect
+ * - Project link electric zap
+ * - Mobile menu electric slide
+ * - Logo electric heartbeat
+ * - Electric particles mixed with existing particles
+ * - Form success electric feedback
+ * - Section active indicator
+ * - Footer circuit pattern
  * - Cursor trail effect (with touch device detection!)
  * - Enhanced floating particles (emerald, amber, sparkle variations)
  * - Parallax scrolling
@@ -18,18 +32,137 @@ import MeshGradientElegant from '../components/MeshGradientElegant';
  * - Smooth scroll
  * - Scroll progress indicator
  * - Staggered animations
+ * - Lightning arcs on hover
+ * - Plasma borders
+ * - Circuit board traces
  */
 
 // ============================================================================
-// CURSOR TRAIL COMPONENT (NOW WITH TOUCH DETECTION!)
+// ELECTRIC SOUND EFFECTS SYSTEM ⚡🔊
+// ============================================================================
+const useElectricSounds = () => {
+  const audioContextRef = useRef(null);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+
+  useEffect(() => {
+    // Initialize audio context on first user interaction
+    const initAudio = () => {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        setSoundEnabled(true);
+      }
+    };
+
+    // Enable on first interaction
+    const enableAudio = () => {
+      initAudio();
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+    };
+
+    document.addEventListener('click', enableAudio, { once: true });
+    document.addEventListener('touchstart', enableAudio, { once: true });
+
+    return () => {
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+    };
+  }, []);
+
+  const playElectricSound = useCallback((type = 'zap', volume = 0.15) => {
+    if (!audioContextRef.current || !soundEnabled) return;
+
+    const ctx = audioContextRef.current;
+    const now = ctx.currentTime;
+
+    // Create oscillator for the sound
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    switch (type) {
+      case 'zap': // Quick electric zap
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2000, now);
+        gain.gain.setValueAtTime(volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+        break;
+
+      case 'spark': // Tiny electric spark
+        osc.frequency.setValueAtTime(1200, now);
+        osc.frequency.exponentialRampToValueAtTime(400, now + 0.03);
+        gain.gain.setValueAtTime(volume * 0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
+        osc.start(now);
+        osc.stop(now + 0.03);
+        break;
+
+      case 'crackle': // Electric crackle
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1500, now);
+        gain.gain.setValueAtTime(volume * 0.7, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+        break;
+
+      case 'powerOn': // Section power on
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, now);
+        filter.frequency.linearRampToValueAtTime(3000, now + 0.15);
+        gain.gain.setValueAtTime(volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
+        break;
+
+      case 'charge': // Charging/powering up
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.linearRampToValueAtTime(600, now + 0.2);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(volume, now + 0.1);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+        break;
+
+      case 'pulse': // Electric pulse
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, now);
+        gain.gain.setValueAtTime(volume * 0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
+        break;
+    }
+  }, [soundEnabled]);
+
+  return { playSound: playElectricSound, soundEnabled };
+};
+
+// ============================================================================
+// ENHANCED ELECTRIC CURSOR TRAIL WITH SPARKS ⚡✨
 // ============================================================================
 function CursorTrail() {
   const [particles, setParticles] = useState([]);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isTouchDevice, setIsTouchDevice] = useState(true); // Start as true to prevent flash
+  const [isTouchDevice, setIsTouchDevice] = useState(true);
   const particleIdRef = useRef(0);
+  const { playSound } = useElectricSounds();
 
-  // Detect touch devices on mount
   useEffect(() => {
     const checkTouchDevice = () => {
       const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -39,23 +172,32 @@ function CursorTrail() {
   }, []);
 
   useEffect(() => {
-    // Don't initialize cursor trail on touch devices
     if (isTouchDevice) return;
 
     let animationFrameId;
     let lastTime = Date.now();
+    let lastSparkTime = Date.now();
 
     const handleMouseMove = (e) => {
       setMousePos({ x: e.clientX, y: e.clientY });
-      
+
       const currentTime = Date.now();
-      // Create particles less frequently for better performance
+
+      // Create regular particles
       if (currentTime - lastTime > 50) {
         const id = particleIdRef.current++;
-        const particleType = Math.random() > 0.5 ? 'sparkle' : 'leaf';
-        
+        // Mix of sparkles, leaves, and ELECTRIC SPARKS!
+        const rand = Math.random();
+        const particleType = rand > 0.7 ? 'spark' : (rand > 0.4 ? 'sparkle' : 'leaf');
+
+        // Play spark sound occasionally
+        if (particleType === 'spark' && currentTime - lastSparkTime > 300) {
+          playSound('spark', 0.05);
+          lastSparkTime = currentTime;
+        }
+
         setParticles((prev) => [
-          ...prev.slice(-15), // Keep only last 15 particles
+          ...prev.slice(-20), // Keep more particles for richer effect
           {
             id,
             x: e.clientX,
@@ -64,8 +206,8 @@ function CursorTrail() {
             rotation: Math.random() * 360,
             scale: 0.5 + Math.random() * 0.5,
             velocity: {
-              x: (Math.random() - 0.5) * 2,
-              y: (Math.random() - 0.5) * 2,
+              x: (Math.random() - 0.5) * (particleType === 'spark' ? 4 : 2),
+              y: (Math.random() - 0.5) * (particleType === 'spark' ? 4 : 2),
             },
           },
         ]);
@@ -80,10 +222,10 @@ function CursorTrail() {
             ...p,
             x: p.x + p.velocity.x,
             y: p.y + p.velocity.y,
-            rotation: p.rotation + 2,
-            scale: p.scale * 0.97, // Fade out by scaling down
+            rotation: p.rotation + (p.type === 'spark' ? 8 : 2),
+            scale: p.scale * (p.type === 'spark' ? 0.92 : 0.97),
           }))
-          .filter((p) => p.scale > 0.1) // Remove tiny particles
+          .filter((p) => p.scale > 0.1)
       );
       animationFrameId = requestAnimationFrame(updateParticles);
     };
@@ -95,33 +237,32 @@ function CursorTrail() {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isTouchDevice]);
+  }, [isTouchDevice, playSound]);
 
-  // Don't render anything on touch devices
   if (isTouchDevice) return null;
 
   return (
     <>
-      {/* Custom cursor dot */}
+      {/* Enhanced electric cursor dot */}
       <motion.div
         className="fixed top-0 left-0 w-4 h-4 rounded-full pointer-events-none z-[9999] mix-blend-screen"
         style={{
-          background: 'radial-gradient(circle, rgba(52, 211, 153, 0.8), rgba(52, 211, 153, 0.2))',
-          boxShadow: '0 0 20px rgba(52, 211, 153, 0.6)',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(52, 211, 153, 0.6), rgba(52, 211, 153, 0.2))',
+          boxShadow: '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
         }}
         animate={{
           x: mousePos.x - 8,
           y: mousePos.y - 8,
+          scale: [1, 1.2, 1],
         }}
         transition={{
-          type: 'spring',
-          damping: 30,
-          stiffness: 400,
-          mass: 0.5,
+          x: { type: 'spring', damping: 30, stiffness: 400, mass: 0.5 },
+          y: { type: 'spring', damping: 30, stiffness: 400, mass: 0.5 },
+          scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
         }}
       />
 
-      {/* Particles */}
+      {/* Particles with electric sparks! */}
       {particles.map((particle) => (
         <div
           key={particle.id}
@@ -133,7 +274,15 @@ function CursorTrail() {
             opacity: particle.scale,
           }}
         >
-          {particle.type === 'sparkle' ? (
+          {particle.type === 'spark' ? (
+            // ELECTRIC SPARK! ⚡
+            <div className="relative w-3 h-3">
+              <div className="absolute inset-0 bg-white rounded-full" style={{
+                boxShadow: '0 0 8px rgba(255, 255, 255, 1), 0 0 12px rgba(52, 211, 153, 0.8)'
+              }} />
+              <div className="absolute inset-0 bg-gradient-to-br from-white via-emerald-300 to-emerald-500 rounded-full animate-pulse" />
+            </div>
+          ) : particle.type === 'sparkle' ? (
             <Sparkles
               size={12}
               className="text-emerald-400"
@@ -288,25 +437,82 @@ function EnhancedParticles() {
 // ============================================================================
 // SCROLL PROGRESS INDICATOR (Lightweight)
 // ============================================================================
+// ============================================================================
+// ELECTRIC SCROLL PROGRESS BAR WITH LIGHTNING ⚡📊
+// ============================================================================
 function ScrollProgress() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showLightning, setShowLightning] = useState(false);
+  const { playSound } = useElectricSounds();
+  const lastMilestone = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setScrollProgress(progress);
+
+      // Trigger lightning at milestones (25%, 50%, 75%, 100%)
+      const currentMilestone = Math.floor(progress / 25);
+      if (currentMilestone > lastMilestone.current && currentMilestone <= 4) {
+        setShowLightning(true);
+        playSound('zap', 0.1);
+        setTimeout(() => setShowLightning(false), 300);
+        lastMilestone.current = currentMilestone;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [playSound]);
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 origin-left z-50 transition-transform duration-150 ease-out"
-      style={{ transform: `scaleX(${scrollProgress / 100})` }}
-    />
+    <>
+      {/* Electric progress bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 z-50 pointer-events-none">
+        <motion.div
+          className="h-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 origin-left relative"
+          style={{
+            transform: `scaleX(${scrollProgress / 100})`,
+            boxShadow: '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.4)'
+          }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+        >
+          {/* Glowing leading edge */}
+          <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-r from-transparent via-white to-transparent opacity-80" />
+
+          {/* Electric pulse at the edge */}
+          <motion.div
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full"
+            style={{
+              boxShadow: '0 0 8px rgba(255, 255, 255, 1), 0 0 12px rgba(52, 211, 153, 0.8)'
+            }}
+            animate={{
+              scale: [1, 1.5, 1],
+              opacity: [1, 0.6, 1],
+            }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        </motion.div>
+
+        {/* Lightning flash at milestones */}
+        {showLightning && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 0.3 }}
+            style={{
+              boxShadow: '0 0 20px rgba(52, 211, 153, 1)'
+            }}
+          />
+        )}
+      </div>
+    </>
   );
 }
 
@@ -318,6 +524,7 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const { playSound } = useElectricSounds();
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -334,6 +541,7 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
 
   const handleMouseEnter = () => {
     setIsHovered(true);
+    playSound('crackle', 0.08);
   };
 
   const handleMouseLeave = () => {
@@ -573,14 +781,20 @@ function PlasmaBorder({ children, className = "" }) {
 // ============================================================================
 function LightningButton({ children, className = "", href, onClick, ...props }) {
   const [isHovered, setIsHovered] = useState(false);
+  const { playSound } = useElectricSounds();
 
   const Component = href ? 'a' : 'button';
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    playSound('zap', 0.1);
+  };
 
   return (
     <Component
       href={href}
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
       className={`relative inline-flex items-center gap-2 overflow-hidden ${className}`}
       {...props}
@@ -591,6 +805,197 @@ function LightningButton({ children, className = "", href, onClick, ...props }) 
       </div>
       {children}
     </Component>
+  );
+}
+
+// ============================================================================
+// LOGO ELECTRIC HEARTBEAT 💚⚡
+// ============================================================================
+function LogoHeartbeat({ children }) {
+  return (
+    <motion.div
+      className="relative"
+      animate={{
+        filter: [
+          'drop-shadow(0 0 8px rgba(52, 211, 153, 0.4))',
+          'drop-shadow(0 0 12px rgba(52, 211, 153, 0.6))',
+          'drop-shadow(0 0 8px rgba(52, 211, 153, 0.4))',
+        ],
+      }}
+      transition={{
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// NAV ELECTRIC UNDERLINE ⚡
+// ============================================================================
+function NavLink({ children, href, onClick, className = "" }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const { playSound } = useElectricSounds();
+
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        playSound('spark', 0.06);
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`relative ${className}`}
+    >
+      {children}
+      {/* Electric underline */}
+      <motion.div
+        className="absolute -bottom-1 left-0 right-0 h-[2px]"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={isHovered ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        style={{
+          background: 'linear-gradient(90deg, transparent, #34d399, transparent)',
+          boxShadow: '0 0 8px rgba(52, 211, 153, 0.8)',
+        }}
+      />
+    </a>
+  );
+}
+
+// ============================================================================
+// FORM INPUT ELECTRIC GLOW ⚡✨
+// ============================================================================
+function ElectricInput({ className = "", ...props }) {
+  const [isFocused, setIsFocused] = useState(false);
+  const { playSound } = useElectricSounds();
+
+  return (
+    <motion.input
+      {...props}
+      onFocus={(e) => {
+        setIsFocused(true);
+        playSound('pulse', 0.08);
+        props.onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        setIsFocused(false);
+        props.onBlur?.(e);
+      }}
+      className={className}
+      animate={isFocused ? {
+        boxShadow: [
+          '0 0 0px rgba(52, 211, 153, 0)',
+          '0 0 12px rgba(52, 211, 153, 0.6)',
+          '0 0 8px rgba(52, 211, 153, 0.4)',
+        ],
+      } : {}}
+      transition={{ duration: 0.5 }}
+    />
+  );
+}
+
+function ElectricTextarea({ className = "", ...props }) {
+  const [isFocused, setIsFocused] = useState(false);
+  const { playSound } = useElectricSounds();
+
+  return (
+    <motion.textarea
+      {...props}
+      onFocus={(e) => {
+        setIsFocused(true);
+        playSound('pulse', 0.08);
+        props.onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        setIsFocused(false);
+        props.onBlur?.(e);
+      }}
+      className={className}
+      animate={isFocused ? {
+        boxShadow: [
+          '0 0 0px rgba(52, 211, 153, 0)',
+          '0 0 12px rgba(52, 211, 153, 0.6)',
+          '0 0 8px rgba(52, 211, 153, 0.4)',
+        ],
+      } : {}}
+      transition={{ duration: 0.5 }}
+    />
+  );
+}
+
+// ============================================================================
+// SECTION POWER-ON TRANSITION ⚡🔌
+// ============================================================================
+function PowerOnSection({ children, id, eyebrow, title }) {
+  const [isPoweredOn, setIsPoweredOn] = useState(false);
+  const { playSound } = useElectricSounds();
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isPoweredOn) {
+          setIsPoweredOn(true);
+          playSound('powerOn', 0.12);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isPoweredOn, playSound]);
+
+  return (
+    <section ref={sectionRef} id={id} className="relative py-16 md:py-24">
+      {/* Power-on circuit traces */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-[2px]"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={isPoweredOn ? { scaleX: 1, opacity: 1 } : {}}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        style={{
+          background: 'linear-gradient(90deg, transparent, #34d399, transparent)',
+          boxShadow: '0 0 10px rgba(52, 211, 153, 0.6)',
+          transformOrigin: 'center',
+        }}
+      />
+
+      <div className="container mx-auto max-w-6xl px-4 relative z-10">
+        {eyebrow && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={isPoweredOn ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-2 text-sm text-emerald-400 tracking-wider uppercase font-semibold"
+            style={{
+              textShadow: '0 0 10px rgba(52, 211, 153, 0.5)',
+            }}
+          >
+            {eyebrow}
+          </motion.div>
+        )}
+        {title && (
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isPoweredOn ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mb-12 text-3xl md:text-4xl font-semibold text-emerald-50"
+          >
+            {title}
+          </motion.h2>
+        )}
+        {children}
+      </div>
+    </section>
   );
 }
 
@@ -933,7 +1338,7 @@ function ContactForm() {
           <div className="grid grid-cols-2 gap-4">
             <label className="col-span-2">
               <span className="text-sm">Your name</span>
-              <input
+              <ElectricInput
                 name="name"
                 value={formState.name}
                 onChange={handleChange}
@@ -944,7 +1349,7 @@ function ContactForm() {
             </label>
             <label className="col-span-2 md:col-span-1">
               <span className="text-sm">Email</span>
-              <input
+              <ElectricInput
                 type="email"
                 name="email"
                 value={formState.email}
@@ -956,7 +1361,7 @@ function ContactForm() {
             </label>
             <label className="col-span-2 md:col-span-1">
               <span className="text-sm">Company</span>
-              <input
+              <ElectricInput
                 name="company"
                 value={formState.company}
                 onChange={handleChange}
@@ -966,7 +1371,7 @@ function ContactForm() {
             </label>
             <label className="col-span-2">
               <span className="text-sm">What are you building?</span>
-              <textarea
+              <ElectricTextarea
                 name="message"
                 value={formState.message}
                 onChange={handleChange}
@@ -1045,12 +1450,14 @@ export default function Page() {
       <header className="sticky top-0 z-40 backdrop-blur-md bg-emerald-950/80 border-b border-emerald-300/10">
         <div className="container mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img 
-              src="/logo.png" 
-              alt="Emerald Grove Digital Logo" 
-              className="w-[50px] h-[50px] object-contain"
-            />
-            <span className="font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-emerald-400 to-amber-300" 
+            <LogoHeartbeat>
+              <img
+                src="/logo.png"
+                alt="Emerald Grove Digital Logo"
+                className="w-[50px] h-[50px] object-contain"
+              />
+            </LogoHeartbeat>
+            <span className="font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-emerald-400 to-amber-300"
                   style={{
                     textShadow: '0 0 20px rgba(52, 211, 153, 0.3)',
                     filter: 'drop-shadow(0 0 10px rgba(52, 211, 153, 0.2))',
@@ -1059,24 +1466,38 @@ export default function Page() {
             </span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#about" onClick={(e) => handleNavClick(e, "about")} className="hover:text-emerald-200">
+            <NavLink href="#about" onClick={(e) => handleNavClick(e, "about")} className="hover:text-emerald-200">
               About
-            </a>
-            <a href="#services" onClick={(e) => handleNavClick(e, "services")} className="hover:text-emerald-200">
+            </NavLink>
+            <NavLink href="#services" onClick={(e) => handleNavClick(e, "services")} className="hover:text-emerald-200">
               Services
-            </a>
-            <a href="#work" onClick={(e) => handleNavClick(e, "work")} className="hover:text-emerald-200">
+            </NavLink>
+            <NavLink href="#work" onClick={(e) => handleNavClick(e, "work")} className="hover:text-emerald-200">
               Work
-            </a>
-            <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="hover:text-emerald-200">
+            </NavLink>
+            <NavLink href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="hover:text-emerald-200">
               Contact
-            </a>
-            <a
+            </NavLink>
+            <LightningButton
               href="/ai-playground"
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500 text-emerald-950 font-semibold hover:bg-emerald-400"
+              className="px-3 py-1.5 rounded-full bg-emerald-500 text-emerald-950 font-semibold hover:bg-emerald-400 relative"
             >
-              <Sparkles size={14} /> Playground
-            </a>
+              <motion.div
+                className="absolute inset-0 bg-emerald-400 rounded-full"
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <span className="relative flex items-center gap-2">
+                <Sparkles size={14} /> Playground
+              </span>
+            </LightningButton>
           </nav>
           <button className="md:hidden p-2" onClick={() => setNavOpen((s) => !s)}>
             {navOpen ? <X /> : <Menu />}
