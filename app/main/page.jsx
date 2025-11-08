@@ -184,14 +184,22 @@ function CursorTrail() {
 function EnhancedParticles() {
   const [windowHeight, setWindowHeight] = useState(1000);
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // Prevent hydration mismatch by only rendering on client
     setMounted(true);
     setWindowHeight(window.innerHeight);
 
+    // Detect mobile for performance optimization
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+
     const handleResize = () => {
       setWindowHeight(window.innerHeight);
+      checkMobile();
     };
 
     window.addEventListener('resize', handleResize);
@@ -201,8 +209,11 @@ function EnhancedParticles() {
   // Don't render particles until mounted (prevents hydration mismatch)
   if (!mounted) return null;
 
+  // Reduce particles on mobile for better performance
+  const particleCount = isMobile ? { emerald: 6, amber: 3, sparks: 4 } : { emerald: 15, amber: 8, sparks: 12 };
+
   // ELECTRIFIED particles with white-hot centers!
-  const emeraldParticles = Array.from({ length: 15 }, (_, i) => ({
+  const emeraldParticles = Array.from({ length: particleCount.emerald }, (_, i) => ({
     id: `emerald-${i}`,
     left: `${Math.random() * 100}%`,
     delay: Math.random() * 5,
@@ -211,7 +222,7 @@ function EnhancedParticles() {
     opacity: 0.5 + Math.random() * 0.4,
   }));
 
-  const amberParticles = Array.from({ length: 8 }, (_, i) => ({
+  const amberParticles = Array.from({ length: particleCount.amber }, (_, i) => ({
     id: `amber-${i}`,
     left: `${Math.random() * 100}%`,
     delay: Math.random() * 5,
@@ -221,7 +232,7 @@ function EnhancedParticles() {
   }));
 
   // ELECTRIC SPARKS - white-hot energy bolts!
-  const electricSparks = Array.from({ length: 12 }, (_, i) => ({
+  const electricSparks = Array.from({ length: particleCount.sparks }, (_, i) => ({
     id: `spark-${i}`,
     left: `${Math.random() * 100}%`,
     delay: Math.random() * 6,
@@ -244,7 +255,13 @@ function EnhancedParticles() {
             background: `radial-gradient(circle, rgba(255, 255, 255, ${p.opacity * 0.6}), rgba(52, 211, 153, ${p.opacity}))`,
             boxShadow: `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
           }}
-          animate={{
+          animate={isMobile ? {
+            // Simplified animation for mobile performance
+            y: [0, -(windowHeight + 100)],
+            x: [0, Math.sin(p.id.length) * 80],
+            opacity: [0, p.opacity, p.opacity, 0],
+          } : {
+            // Full animation for desktop
             y: [0, -(windowHeight + 100)],
             x: [0, Math.sin(p.id.length) * 80],
             opacity: [0, p.opacity, p.opacity, 0],
@@ -277,7 +294,13 @@ function EnhancedParticles() {
             background: `radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(252, 211, 77, ${p.opacity}))`,
             boxShadow: `0 0 ${p.size * 4}px rgba(252, 211, 77, ${p.opacity}), 0 0 ${p.size * 6}px rgba(252, 211, 77, ${p.opacity * 0.6})`,
           }}
-          animate={{
+          animate={isMobile ? {
+            // Simplified animation for mobile performance
+            y: [0, -(windowHeight + 100)],
+            x: [0, Math.cos(p.id.length) * 60],
+            opacity: [0, p.opacity, p.opacity, 0],
+          } : {
+            // Full animation for desktop
             y: [0, -(windowHeight + 100)],
             x: [0, Math.cos(p.id.length) * 60],
             opacity: [0, p.opacity, p.opacity, 0],
@@ -316,7 +339,13 @@ function EnhancedParticles() {
               background: 'radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.8), rgba(52, 211, 153, 0.6))',
               boxShadow: '0 0 12px rgba(255, 255, 255, 1), 0 0 20px rgba(52, 211, 153, 0.8), 0 0 30px rgba(52, 211, 153, 0.4)',
             }}
-            animate={{
+            animate={isMobile ? {
+              // Simplified animation for mobile performance
+              y: [0, -(windowHeight + 100)],
+              x: [0, (Math.random() - 0.5) * 120],
+              opacity: [0, 1, 1, 0.6, 0],
+            } : {
+              // Full animation for desktop
               y: [0, -(windowHeight + 100)],
               x: [0, (Math.random() - 0.5) * 120],
               scale: [1, 1.8, 0.8, 1.2, 1],
@@ -336,29 +365,31 @@ function EnhancedParticles() {
               ease: 'easeInOut',
             }}
           />
-          {/* Electric trail */}
-          <motion.div
-            className="absolute rounded-full"
-            style={{
-              width: p.size * 1.5,
-              height: p.size * 1.5,
-              background: 'radial-gradient(circle, rgba(52, 211, 153, 0.4), transparent)',
-              left: -p.size * 0.25,
-              top: -p.size * 0.25,
-            }}
-            animate={{
-              y: [0, -(windowHeight + 100)],
-              x: [0, (Math.random() - 0.5) * 120],
-              opacity: [0, 0.5, 0.5, 0],
-              scale: [1.5, 2, 1.5],
-            }}
-            transition={{
-              duration: p.duration,
-              delay: p.delay,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
+          {/* Electric trail - desktop only for performance */}
+          {!isMobile && (
+            <motion.div
+              className="absolute rounded-full"
+              style={{
+                width: p.size * 1.5,
+                height: p.size * 1.5,
+                background: 'radial-gradient(circle, rgba(52, 211, 153, 0.4), transparent)',
+                left: -p.size * 0.25,
+                top: -p.size * 0.25,
+              }}
+              animate={{
+                y: [0, -(windowHeight + 100)],
+                x: [0, (Math.random() - 0.5) * 120],
+                opacity: [0, 0.5, 0.5, 0],
+                scale: [1.5, 2, 1.5],
+              }}
+              transition={{
+                duration: p.duration,
+                delay: p.delay,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+          )}
         </motion.div>
       ))}
     </div>
@@ -1194,7 +1225,15 @@ export default function Page() {
 
   // Scroll to top when page loads (especially important for mobile navigation from matrix page)
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Immediate scroll
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
+    // Fallback scroll after a short delay to ensure page is fully rendered
+    const scrollTimer = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }, 100);
+
+    return () => clearTimeout(scrollTimer);
   }, []);
 
   const handleNavClick = (e, targetId) => {
