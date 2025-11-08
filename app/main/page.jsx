@@ -75,78 +75,186 @@ const useElectricSounds = () => {
     const ctx = audioContextRef.current;
     const now = ctx.currentTime;
 
-    // Create oscillator for the sound
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const filter = ctx.createBiquadFilter();
-
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-
     switch (type) {
-      case 'zap': // Quick electric zap
-        osc.frequency.setValueAtTime(800, now);
-        osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(2000, now);
-        gain.gain.setValueAtTime(volume, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-        osc.start(now);
-        osc.stop(now + 0.05);
-        break;
+      case 'zap': { // Quick electric zap with white noise burst
+        // Create noise buffer for realistic electric crackle
+        const bufferSize = ctx.sampleRate * 0.06;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          // Decaying white noise
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+        }
 
-      case 'spark': // Tiny electric spark
-        osc.frequency.setValueAtTime(1200, now);
-        osc.frequency.exponentialRampToValueAtTime(400, now + 0.03);
-        gain.gain.setValueAtTime(volume * 0.5, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
-        osc.start(now);
-        osc.stop(now + 0.03);
-        break;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
 
-      case 'crackle': // Electric crackle
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(600, now);
-        osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+        const noiseGain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(1500, now);
-        gain.gain.setValueAtTime(volume * 0.7, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-        osc.start(now);
-        osc.stop(now + 0.08);
-        break;
+        filter.frequency.setValueAtTime(2000, now);
+        filter.Q.setValueAtTime(1, now);
 
-      case 'powerOn': // Section power on
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+
+        noiseGain.gain.setValueAtTime(volume * 0.8, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+
+        noise.start(now);
+        noise.stop(now + 0.06);
+        break;
+      }
+
+      case 'spark': { // Tiny electric snap
+        const bufferSize = ctx.sampleRate * 0.02;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(3000, now);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+
+        noiseGain.gain.setValueAtTime(volume * 0.4, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.02);
+
+        noise.start(now);
+        noise.stop(now + 0.02);
+        break;
+      }
+
+      case 'crackle': { // Electric crackle with harmonic distortion
+        // Multiple oscillators for harmonic richness
+        const fundamentalFreq = 150;
+        const duration = 0.1;
+
+        for (let harmonic = 1; harmonic <= 3; harmonic++) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(fundamentalFreq * harmonic, now);
+          osc.frequency.exponentialRampToValueAtTime(fundamentalFreq * harmonic * 0.5, now + duration);
+
+          gain.gain.setValueAtTime(volume / harmonic, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + duration);
+        }
+
+        // Add noise layer for texture
+        const bufferSize = ctx.sampleRate * duration;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * 0.3 * Math.exp(-i / (bufferSize * 0.4));
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(volume * 0.3, now);
+        noise.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noise.start(now);
+        noise.stop(now + duration);
+        break;
+      }
+
+      case 'powerOn': { // Power surge
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(80, now);
+        osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1000, now);
-        filter.frequency.linearRampToValueAtTime(3000, now + 0.15);
+        filter.frequency.setValueAtTime(500, now);
+        filter.frequency.exponentialRampToValueAtTime(2500, now + 0.15);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
         gain.gain.setValueAtTime(volume, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
         osc.start(now);
         osc.stop(now + 0.15);
-        break;
 
-      case 'charge': // Charging/powering up
-        osc.frequency.setValueAtTime(300, now);
-        osc.frequency.linearRampToValueAtTime(600, now + 0.2);
+        // Add click at start
+        const clickGain = ctx.createGain();
+        const clickOsc = ctx.createOscillator();
+        clickOsc.frequency.setValueAtTime(2000, now);
+        clickOsc.connect(clickGain);
+        clickGain.connect(ctx.destination);
+        clickGain.gain.setValueAtTime(volume * 0.5, now);
+        clickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.01);
+        clickOsc.start(now);
+        clickOsc.stop(now + 0.01);
+        break;
+      }
+
+      case 'charge': { // Charging up
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.linearRampToValueAtTime(800, now + 0.2);
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(600, now);
+        filter.frequency.linearRampToValueAtTime(1200, now + 0.2);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
         gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(volume, now + 0.1);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+        gain.gain.linearRampToValueAtTime(volume, now + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
         osc.start(now);
         osc.stop(now + 0.2);
         break;
+      }
 
-      case 'pulse': // Electric pulse
+      case 'pulse': { // Electric hum
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
         osc.type = 'square';
-        osc.frequency.setValueAtTime(440, now);
-        gain.gain.setValueAtTime(volume * 0.6, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.frequency.setValueAtTime(120, now);
+
+        gain.gain.setValueAtTime(volume * 0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
         osc.start(now);
-        osc.stop(now + 0.1);
+        osc.stop(now + 0.08);
         break;
+      }
     }
   }, [soundEnabled]);
 
@@ -1053,7 +1161,7 @@ function CircuitBoardTraces() {
 
   return (
     <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden">
-      <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ zIndex: 1 }}>
         <defs>
           {/* Gradient for the pulse */}
           <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -1063,7 +1171,7 @@ function CircuitBoardTraces() {
           </linearGradient>
           {/* Glow filter */}
           <filter id="circuitGlow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
             <feMerge>
               <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
@@ -1075,9 +1183,9 @@ function CircuitBoardTraces() {
         <g className="hidden md:block">
           {/* Connection 1 -> 2 */}
           <motion.path
-            d="M 33% 50% L 50% 50% L 50% 50% L 66% 50%"
+            d="M 33 50 L 66 50"
             stroke="#34d399"
-            strokeWidth="2"
+            strokeWidth="0.3"
             fill="none"
             strokeOpacity="0.3"
             initial={{ pathLength: 0 }}
@@ -1087,7 +1195,7 @@ function CircuitBoardTraces() {
           />
           {/* Pulse traveling on connection 1 -> 2 */}
           <motion.circle
-            r="4"
+            r="0.8"
             fill="url(#pulseGradient)"
             initial={{ opacity: 0 }}
             animate={isVisible ? {
@@ -1105,13 +1213,13 @@ function CircuitBoardTraces() {
               <mpath href="#trace1to2" />
             </animateMotion>
           </motion.circle>
-          <path id="trace1to2" d="M 33% 50% L 50% 50% L 50% 50% L 66% 50%" fill="none" />
+          <path id="trace1to2" d="M 33 50 L 66 50" fill="none" />
 
           {/* Connection 2 -> 3 */}
           <motion.path
-            d="M 66% 50% L 83% 50%"
+            d="M 66 50 L 83 50"
             stroke="#34d399"
-            strokeWidth="2"
+            strokeWidth="0.3"
             fill="none"
             strokeOpacity="0.3"
             initial={{ pathLength: 0 }}
@@ -1121,7 +1229,7 @@ function CircuitBoardTraces() {
           />
           {/* Pulse traveling on connection 2 -> 3 */}
           <motion.circle
-            r="4"
+            r="0.8"
             fill="#34d399"
             initial={{ opacity: 0 }}
             animate={isVisible ? {
@@ -1139,11 +1247,11 @@ function CircuitBoardTraces() {
               <mpath href="#trace2to3" />
             </animateMotion>
           </motion.circle>
-          <path id="trace2to3" d="M 66% 50% L 83% 50%" fill="none" />
+          <path id="trace2to3" d="M 66 50 L 83 50" fill="none" />
 
           {/* Circuit nodes (dots at connection points) */}
           <motion.circle
-            cx="33%" cy="50%" r="3"
+            cx="33" cy="50" r="0.6"
             fill="#34d399"
             initial={{ scale: 0 }}
             animate={isVisible ? { scale: [0, 1.5, 1] } : { scale: 0 }}
@@ -1151,7 +1259,7 @@ function CircuitBoardTraces() {
             filter="url(#circuitGlow)"
           />
           <motion.circle
-            cx="66%" cy="50%" r="3"
+            cx="66" cy="50" r="0.6"
             fill="#34d399"
             initial={{ scale: 0 }}
             animate={isVisible ? { scale: [0, 1.5, 1] } : { scale: 0 }}
@@ -1164,9 +1272,9 @@ function CircuitBoardTraces() {
         <g className="block md:hidden">
           {/* Connection 1 -> 2 */}
           <motion.path
-            d="M 50% 33% L 50% 50%"
+            d="M 50 33 L 50 50"
             stroke="#34d399"
-            strokeWidth="2"
+            strokeWidth="0.3"
             fill="none"
             strokeOpacity="0.3"
             initial={{ pathLength: 0 }}
@@ -1176,9 +1284,9 @@ function CircuitBoardTraces() {
           />
           {/* Connection 2 -> 3 */}
           <motion.path
-            d="M 50% 50% L 50% 66%"
+            d="M 50 50 L 50 66"
             stroke="#34d399"
-            strokeWidth="2"
+            strokeWidth="0.3"
             fill="none"
             strokeOpacity="0.3"
             initial={{ pathLength: 0 }}
