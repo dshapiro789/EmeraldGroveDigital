@@ -657,6 +657,11 @@ export default function Page() {
   const [navOpen, setNavOpen] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
 
+  // Scroll to top when page loads (especially important for mobile navigation from matrix page)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleNavClick = (e, targetId) => {
     e.preventDefault();
     
