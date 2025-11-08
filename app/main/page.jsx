@@ -209,8 +209,8 @@ function EnhancedParticles() {
   // Don't render particles until mounted (prevents hydration mismatch)
   if (!mounted) return null;
 
-  // Reduce particles on mobile for better performance
-  const particleCount = isMobile ? { emerald: 6, amber: 3, sparks: 4 } : { emerald: 15, amber: 8, sparks: 12 };
+  // Drastically reduce particles for better performance
+  const particleCount = isMobile ? { emerald: 3, amber: 2, sparks: 2 } : { emerald: 8, amber: 4, sparks: 5 };
 
   // ELECTRIFIED particles with white-hot centers!
   const emeraldParticles = Array.from({ length: particleCount.emerald }, (_, i) => ({
@@ -242,7 +242,7 @@ function EnhancedParticles() {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-[1]">
-      {/* ELECTRIFIED Emerald particles with intense glow */}
+      {/* Emerald particles - simplified for performance */}
       {emeraldParticles.map((p) => (
         <motion.div
           key={p.id}
@@ -252,25 +252,13 @@ function EnhancedParticles() {
             width: p.size,
             height: p.size,
             bottom: '-20px',
-            background: `radial-gradient(circle, rgba(255, 255, 255, ${p.opacity * 0.6}), rgba(52, 211, 153, ${p.opacity}))`,
-            boxShadow: `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
+            background: `rgba(52, 211, 153, ${p.opacity})`,
+            filter: `blur(${p.size * 0.3}px)`,
           }}
-          animate={isMobile ? {
-            // Simplified animation for mobile performance
+          animate={{
             y: [0, -(windowHeight + 100)],
             x: [0, Math.sin(p.id.length) * 80],
             opacity: [0, p.opacity, p.opacity, 0],
-          } : {
-            // Full animation for desktop
-            y: [0, -(windowHeight + 100)],
-            x: [0, Math.sin(p.id.length) * 80],
-            opacity: [0, p.opacity, p.opacity, 0],
-            scale: [1, 1.3, 1],
-            boxShadow: [
-              `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
-              `0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 8}px rgba(52, 211, 153, ${p.opacity * 0.7})`,
-              `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
-            ],
           }}
           transition={{
             duration: p.duration,
@@ -281,7 +269,7 @@ function EnhancedParticles() {
         />
       ))}
 
-      {/* Electric amber sparks with white-hot centers */}
+      {/* Amber particles - simplified for performance */}
       {amberParticles.map((p) => (
         <motion.div
           key={p.id}
@@ -291,25 +279,13 @@ function EnhancedParticles() {
             width: p.size,
             height: p.size,
             bottom: '-20px',
-            background: `radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(252, 211, 77, ${p.opacity}))`,
-            boxShadow: `0 0 ${p.size * 4}px rgba(252, 211, 77, ${p.opacity}), 0 0 ${p.size * 6}px rgba(252, 211, 77, ${p.opacity * 0.6})`,
+            background: `rgba(252, 211, 77, ${p.opacity})`,
+            filter: `blur(${p.size * 0.3}px)`,
           }}
-          animate={isMobile ? {
-            // Simplified animation for mobile performance
+          animate={{
             y: [0, -(windowHeight + 100)],
             x: [0, Math.cos(p.id.length) * 60],
             opacity: [0, p.opacity, p.opacity, 0],
-          } : {
-            // Full animation for desktop
-            y: [0, -(windowHeight + 100)],
-            x: [0, Math.cos(p.id.length) * 60],
-            opacity: [0, p.opacity, p.opacity, 0],
-            scale: [1, 1.5, 1],
-            filter: [
-              'brightness(1)',
-              'brightness(1.5)',
-              'brightness(1)',
-            ],
           }}
           transition={{
             duration: p.duration,
@@ -320,106 +296,47 @@ function EnhancedParticles() {
         />
       ))}
 
-      {/* ELECTRIC SPARKS - White-hot energy with emerald trails! ⚡ */}
+      {/* Electric sparks - simplified for performance */}
       {electricSparks.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute"
+          className="absolute rounded-full"
           style={{
             left: p.left,
+            width: p.size,
+            height: p.size,
             bottom: '-20px',
+            background: 'rgba(110, 231, 183, 0.8)',
+            filter: `blur(${p.size * 0.4}px)`,
           }}
-        >
-          {/* White-hot core */}
-          <motion.div
-            className="absolute rounded-full"
-            style={{
-              width: p.size,
-              height: p.size,
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.8), rgba(52, 211, 153, 0.6))',
-              boxShadow: '0 0 12px rgba(255, 255, 255, 1), 0 0 20px rgba(52, 211, 153, 0.8), 0 0 30px rgba(52, 211, 153, 0.4)',
-            }}
-            animate={isMobile ? {
-              // Simplified animation for mobile performance
-              y: [0, -(windowHeight + 100)],
-              x: [0, (Math.random() - 0.5) * 120],
-              opacity: [0, 1, 1, 0.6, 0],
-            } : {
-              // Full animation for desktop
-              y: [0, -(windowHeight + 100)],
-              x: [0, (Math.random() - 0.5) * 120],
-              scale: [1, 1.8, 0.8, 1.2, 1],
-              opacity: [0, 1, 1, 0.6, 0],
-              filter: [
-                'brightness(1.5)',
-                'brightness(2)',
-                'brightness(1.5)',
-                'brightness(2)',
-                'brightness(1)',
-              ],
-            }}
-            transition={{
-              duration: p.duration,
-              delay: p.delay,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          {/* Electric trail - desktop only for performance */}
-          {!isMobile && (
-            <motion.div
-              className="absolute rounded-full"
-              style={{
-                width: p.size * 1.5,
-                height: p.size * 1.5,
-                background: 'radial-gradient(circle, rgba(52, 211, 153, 0.4), transparent)',
-                left: -p.size * 0.25,
-                top: -p.size * 0.25,
-              }}
-              animate={{
-                y: [0, -(windowHeight + 100)],
-                x: [0, (Math.random() - 0.5) * 120],
-                opacity: [0, 0.5, 0.5, 0],
-                scale: [1.5, 2, 1.5],
-              }}
-              transition={{
-                duration: p.duration,
-                delay: p.delay,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            />
-          )}
-        </motion.div>
+          animate={{
+            y: [0, -(windowHeight + 100)],
+            x: [0, (Math.random() - 0.5) * 100],
+            opacity: [0, 0.8, 0.8, 0],
+          }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        />
       ))}
     </div>
   );
 }
 
 // ============================================================================
-// SCROLL PROGRESS INDICATOR (Lightweight)
-// ============================================================================
-// ============================================================================
-// ELECTRIC SCROLL PROGRESS BAR WITH LIGHTNING ⚡📊
+// SCROLL PROGRESS INDICATOR (Simple)
 // ============================================================================
 function ScrollProgress() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [showLightning, setShowLightning] = useState(false);
-  const lastMilestone = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setScrollProgress(progress);
-
-      // Trigger lightning at milestones (25%, 50%, 75%, 100%)
-      const currentMilestone = Math.floor(progress / 25);
-      if (currentMilestone > lastMilestone.current && currentMilestone <= 4) {
-        setShowLightning(true);
-        setTimeout(() => setShowLightning(false), 300);
-        lastMilestone.current = currentMilestone;
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -427,80 +344,15 @@ function ScrollProgress() {
   }, []);
 
   return (
-    <>
-      {/* Electrified progress bar */}
-      <div className="fixed top-0 left-0 right-0 h-1 z-50 pointer-events-none">
-        <motion.div
-          className="h-full origin-left relative"
-          style={{
-            transform: `scaleX(${scrollProgress / 100})`,
-          }}
-          transition={{ duration: 0.15, ease: "easeOut" }}
-        >
-          {/* Main electric gradient bar with animated glow */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300"
-            animate={{
-              boxShadow: [
-                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5)',
-                '0 0 15px rgba(52, 211, 153, 1), 0 0 30px rgba(52, 211, 153, 0.7)',
-                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5)',
-              ],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-
-          {/* Animated electric shimmer traveling along the bar */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40"
-            animate={{
-              x: ['-100%', '200%'],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          {/* Electric crackle effect at the leading edge */}
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent via-white to-emerald-200 opacity-60" />
-
-          {/* Pulsing intensity at the edge */}
-          <motion.div
-            className="absolute right-0 top-0 bottom-0 w-3"
-            style={{
-              background: 'linear-gradient(90deg, rgba(52, 211, 153, 0) 0%, rgba(255, 255, 255, 0.9) 100%)',
-            }}
-            animate={{
-              opacity: [0.4, 1, 0.4],
-            }}
-            transition={{
-              duration: 0.8,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-        </motion.div>
-
-        {/* Lightning flash at milestones */}
-        {showLightning && (
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ duration: 0.3 }}
-            style={{
-              boxShadow: '0 0 30px rgba(52, 211, 153, 1), 0 0 50px rgba(52, 211, 153, 0.6)'
-            }}
-          />
-        )}
-      </div>
-    </>
+    <div className="fixed top-0 left-0 right-0 h-1 z-50 pointer-events-none bg-emerald-950/20">
+      <div
+        className="h-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 origin-left"
+        style={{
+          transform: `scaleX(${scrollProgress / 100})`,
+          transition: 'transform 0.15s ease-out',
+        }}
+      />
+    </div>
   );
 }
 
