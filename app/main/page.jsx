@@ -1,14 +1,28 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Send, Sparkles, Leaf, Menu, X, Settings, MessageCircle, Play, Shield, Braces, Cpu, LayoutPanelLeft } from "lucide-react";
 import AIGroveSidebar from '../components/AIGroveSidebar';
 import MeshGradientElegant from '../components/MeshGradientElegant';
 
 /**
- * Emerald Grove Digital - Enhanced Premium Version
+ * Emerald Grove Digital - FULL ELECTRIC EDITION ⚡
  * Features:
+ * - Electric sound effects system
+ * - Electric scroll progress bar with lightning
+ * - Navigation electric underline
+ * - Enhanced electric cursor trail with sparks
+ * - Form input electric focus glow
+ * - Section power-on transitions
+ * - AI Playground super-charge effect
+ * - Project link electric zap
+ * - Mobile menu electric slide
+ * - Logo electric heartbeat
+ * - Electric particles mixed with existing particles
+ * - Form success electric feedback
+ * - Section active indicator
+ * - Footer circuit pattern
  * - Cursor trail effect (with touch device detection!)
  * - Enhanced floating particles (emerald, amber, sparkle variations)
  * - Parallax scrolling
@@ -18,18 +32,20 @@ import MeshGradientElegant from '../components/MeshGradientElegant';
  * - Smooth scroll
  * - Scroll progress indicator
  * - Staggered animations
+ * - Lightning arcs on hover
+ * - Plasma borders
+ * - Circuit board traces
  */
 
 // ============================================================================
-// CURSOR TRAIL COMPONENT (NOW WITH TOUCH DETECTION!)
+// ENHANCED ELECTRIC CURSOR TRAIL WITH SPARKS ⚡✨
 // ============================================================================
 function CursorTrail() {
   const [particles, setParticles] = useState([]);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isTouchDevice, setIsTouchDevice] = useState(true); // Start as true to prevent flash
+  const [isTouchDevice, setIsTouchDevice] = useState(true);
   const particleIdRef = useRef(0);
 
-  // Detect touch devices on mount
   useEffect(() => {
     const checkTouchDevice = () => {
       const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -39,23 +55,26 @@ function CursorTrail() {
   }, []);
 
   useEffect(() => {
-    // Don't initialize cursor trail on touch devices
     if (isTouchDevice) return;
 
     let animationFrameId;
     let lastTime = Date.now();
+    let lastSparkTime = Date.now();
 
     const handleMouseMove = (e) => {
       setMousePos({ x: e.clientX, y: e.clientY });
-      
+
       const currentTime = Date.now();
-      // Create particles less frequently for better performance
+
+      // Create regular particles
       if (currentTime - lastTime > 50) {
         const id = particleIdRef.current++;
-        const particleType = Math.random() > 0.5 ? 'sparkle' : 'leaf';
-        
+        // Mix of sparkles, leaves, and ELECTRIC SPARKS!
+        const rand = Math.random();
+        const particleType = rand > 0.7 ? 'spark' : (rand > 0.4 ? 'sparkle' : 'leaf');
+
         setParticles((prev) => [
-          ...prev.slice(-15), // Keep only last 15 particles
+          ...prev.slice(-20), // Keep more particles for richer effect
           {
             id,
             x: e.clientX,
@@ -64,8 +83,8 @@ function CursorTrail() {
             rotation: Math.random() * 360,
             scale: 0.5 + Math.random() * 0.5,
             velocity: {
-              x: (Math.random() - 0.5) * 2,
-              y: (Math.random() - 0.5) * 2,
+              x: (Math.random() - 0.5) * (particleType === 'spark' ? 4 : 2),
+              y: (Math.random() - 0.5) * (particleType === 'spark' ? 4 : 2),
             },
           },
         ]);
@@ -80,10 +99,10 @@ function CursorTrail() {
             ...p,
             x: p.x + p.velocity.x,
             y: p.y + p.velocity.y,
-            rotation: p.rotation + 2,
-            scale: p.scale * 0.97, // Fade out by scaling down
+            rotation: p.rotation + (p.type === 'spark' ? 8 : 2),
+            scale: p.scale * (p.type === 'spark' ? 0.92 : 0.97),
           }))
-          .filter((p) => p.scale > 0.1) // Remove tiny particles
+          .filter((p) => p.scale > 0.1)
       );
       animationFrameId = requestAnimationFrame(updateParticles);
     };
@@ -97,31 +116,30 @@ function CursorTrail() {
     };
   }, [isTouchDevice]);
 
-  // Don't render anything on touch devices
   if (isTouchDevice) return null;
 
   return (
     <>
-      {/* Custom cursor dot */}
+      {/* Enhanced electric cursor dot */}
       <motion.div
         className="fixed top-0 left-0 w-4 h-4 rounded-full pointer-events-none z-[9999] mix-blend-screen"
         style={{
-          background: 'radial-gradient(circle, rgba(52, 211, 153, 0.8), rgba(52, 211, 153, 0.2))',
-          boxShadow: '0 0 20px rgba(52, 211, 153, 0.6)',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(52, 211, 153, 0.6), rgba(52, 211, 153, 0.2))',
+          boxShadow: '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
         }}
         animate={{
           x: mousePos.x - 8,
           y: mousePos.y - 8,
+          scale: [1, 1.2, 1],
         }}
         transition={{
-          type: 'spring',
-          damping: 30,
-          stiffness: 400,
-          mass: 0.5,
+          x: { type: 'spring', damping: 30, stiffness: 400, mass: 0.5 },
+          y: { type: 'spring', damping: 30, stiffness: 400, mass: 0.5 },
+          scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
         }}
       />
 
-      {/* Particles */}
+      {/* Particles with electric sparks! */}
       {particles.map((particle) => (
         <div
           key={particle.id}
@@ -133,7 +151,15 @@ function CursorTrail() {
             opacity: particle.scale,
           }}
         >
-          {particle.type === 'sparkle' ? (
+          {particle.type === 'spark' ? (
+            // ELECTRIC SPARK! ⚡
+            <div className="relative w-3 h-3">
+              <div className="absolute inset-0 bg-white rounded-full" style={{
+                boxShadow: '0 0 8px rgba(255, 255, 255, 1), 0 0 12px rgba(52, 211, 153, 0.8)'
+              }} />
+              <div className="absolute inset-0 bg-gradient-to-br from-white via-emerald-300 to-emerald-500 rounded-full animate-pulse" />
+            </div>
+          ) : particle.type === 'sparkle' ? (
             <Sparkles
               size={12}
               className="text-emerald-400"
@@ -157,26 +183,32 @@ function CursorTrail() {
 // ============================================================================
 function EnhancedParticles() {
   const [windowHeight, setWindowHeight] = useState(1000);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Prevent hydration mismatch by only rendering on client
+    setMounted(true);
     setWindowHeight(window.innerHeight);
-    
+
     const handleResize = () => {
       setWindowHeight(window.innerHeight);
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Create multiple types of particles for visual variety
+  // Don't render particles until mounted (prevents hydration mismatch)
+  if (!mounted) return null;
+
+  // ELECTRIFIED particles with white-hot centers!
   const emeraldParticles = Array.from({ length: 15 }, (_, i) => ({
     id: `emerald-${i}`,
     left: `${Math.random() * 100}%`,
     delay: Math.random() * 5,
     duration: 12 + Math.random() * 8,
-    size: 3 + Math.random() * 3,
-    opacity: 0.4 + Math.random() * 0.4,
+    size: 3 + Math.random() * 4,
+    opacity: 0.5 + Math.random() * 0.4,
   }));
 
   const amberParticles = Array.from({ length: 8 }, (_, i) => ({
@@ -184,21 +216,22 @@ function EnhancedParticles() {
     left: `${Math.random() * 100}%`,
     delay: Math.random() * 5,
     duration: 15 + Math.random() * 10,
-    size: 2 + Math.random() * 2,
-    opacity: 0.3 + Math.random() * 0.3,
+    size: 2 + Math.random() * 3,
+    opacity: 0.4 + Math.random() * 0.3,
   }));
 
-  const sparkleParticles = Array.from({ length: 10 }, (_, i) => ({
-    id: `sparkle-${i}`,
+  // ELECTRIC SPARKS - white-hot energy bolts!
+  const electricSparks = Array.from({ length: 12 }, (_, i) => ({
+    id: `spark-${i}`,
     left: `${Math.random() * 100}%`,
-    delay: Math.random() * 5,
-    duration: 10 + Math.random() * 8,
-    size: 1.5 + Math.random() * 1.5,
+    delay: Math.random() * 6,
+    duration: 8 + Math.random() * 6,
+    size: 2 + Math.random() * 3,
   }));
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-[1]">
-      {/* Emerald particles */}
+      {/* ELECTRIFIED Emerald particles with intense glow */}
       {emeraldParticles.map((p) => (
         <motion.div
           key={p.id}
@@ -208,14 +241,19 @@ function EnhancedParticles() {
             width: p.size,
             height: p.size,
             bottom: '-20px',
-            background: `rgba(52, 211, 153, ${p.opacity})`,
-            boxShadow: `0 0 ${p.size * 2}px rgba(52, 211, 153, ${p.opacity * 0.8})`,
+            background: `radial-gradient(circle, rgba(255, 255, 255, ${p.opacity * 0.6}), rgba(52, 211, 153, ${p.opacity}))`,
+            boxShadow: `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
           }}
           animate={{
             y: [0, -(windowHeight + 100)],
             x: [0, Math.sin(p.id.length) * 80],
             opacity: [0, p.opacity, p.opacity, 0],
-            scale: [1, 1.2, 1],
+            scale: [1, 1.3, 1],
+            boxShadow: [
+              `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
+              `0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 8}px rgba(52, 211, 153, ${p.opacity * 0.7})`,
+              `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
+            ],
           }}
           transition={{
             duration: p.duration,
@@ -226,7 +264,7 @@ function EnhancedParticles() {
         />
       ))}
 
-      {/* Amber particles */}
+      {/* Electric amber sparks with white-hot centers */}
       {amberParticles.map((p) => (
         <motion.div
           key={p.id}
@@ -236,14 +274,19 @@ function EnhancedParticles() {
             width: p.size,
             height: p.size,
             bottom: '-20px',
-            background: `rgba(252, 211, 77, ${p.opacity})`,
-            boxShadow: `0 0 ${p.size * 3}px rgba(252, 211, 77, ${p.opacity * 0.6})`,
+            background: `radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(252, 211, 77, ${p.opacity}))`,
+            boxShadow: `0 0 ${p.size * 4}px rgba(252, 211, 77, ${p.opacity}), 0 0 ${p.size * 6}px rgba(252, 211, 77, ${p.opacity * 0.6})`,
           }}
           animate={{
             y: [0, -(windowHeight + 100)],
             x: [0, Math.cos(p.id.length) * 60],
             opacity: [0, p.opacity, p.opacity, 0],
-            scale: [1, 1.3, 1],
+            scale: [1, 1.5, 1],
+            filter: [
+              'brightness(1)',
+              'brightness(1.5)',
+              'brightness(1)',
+            ],
           }}
           transition={{
             duration: p.duration,
@@ -254,32 +297,69 @@ function EnhancedParticles() {
         />
       ))}
 
-      {/* Sparkle particles */}
-      {sparkleParticles.map((p) => (
+      {/* ELECTRIC SPARKS - White-hot energy with emerald trails! ⚡ */}
+      {electricSparks.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full"
+          className="absolute"
           style={{
             left: p.left,
-            width: p.size,
-            height: p.size,
             bottom: '-20px',
-            background: 'rgba(110, 231, 183, 0.6)',
-            boxShadow: '0 0 8px rgba(110, 231, 183, 0.8)',
           }}
-          animate={{
-            y: [0, -(windowHeight + 100)],
-            x: [0, (Math.random() - 0.5) * 100],
-            opacity: [0, 0.8, 0.8, 0],
-            scale: [1, 1.5, 0.5, 1],
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+        >
+          {/* White-hot core */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: p.size,
+              height: p.size,
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.8), rgba(52, 211, 153, 0.6))',
+              boxShadow: '0 0 12px rgba(255, 255, 255, 1), 0 0 20px rgba(52, 211, 153, 0.8), 0 0 30px rgba(52, 211, 153, 0.4)',
+            }}
+            animate={{
+              y: [0, -(windowHeight + 100)],
+              x: [0, (Math.random() - 0.5) * 120],
+              scale: [1, 1.8, 0.8, 1.2, 1],
+              opacity: [0, 1, 1, 0.6, 0],
+              filter: [
+                'brightness(1.5)',
+                'brightness(2)',
+                'brightness(1.5)',
+                'brightness(2)',
+                'brightness(1)',
+              ],
+            }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+          {/* Electric trail */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: p.size * 1.5,
+              height: p.size * 1.5,
+              background: 'radial-gradient(circle, rgba(52, 211, 153, 0.4), transparent)',
+              left: -p.size * 0.25,
+              top: -p.size * 0.25,
+            }}
+            animate={{
+              y: [0, -(windowHeight + 100)],
+              x: [0, (Math.random() - 0.5) * 120],
+              opacity: [0, 0.5, 0.5, 0],
+              scale: [1.5, 2, 1.5],
+            }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        </motion.div>
       ))}
     </div>
   );
@@ -288,14 +368,27 @@ function EnhancedParticles() {
 // ============================================================================
 // SCROLL PROGRESS INDICATOR (Lightweight)
 // ============================================================================
+// ============================================================================
+// ELECTRIC SCROLL PROGRESS BAR WITH LIGHTNING ⚡📊
+// ============================================================================
 function ScrollProgress() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showLightning, setShowLightning] = useState(false);
+  const lastMilestone = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setScrollProgress(progress);
+
+      // Trigger lightning at milestones (25%, 50%, 75%, 100%)
+      const currentMilestone = Math.floor(progress / 25);
+      if (currentMilestone > lastMilestone.current && currentMilestone <= 4) {
+        setShowLightning(true);
+        setTimeout(() => setShowLightning(false), 300);
+        lastMilestone.current = currentMilestone;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -303,10 +396,80 @@ function ScrollProgress() {
   }, []);
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 origin-left z-50 transition-transform duration-150 ease-out"
-      style={{ transform: `scaleX(${scrollProgress / 100})` }}
-    />
+    <>
+      {/* Electrified progress bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 z-50 pointer-events-none">
+        <motion.div
+          className="h-full origin-left relative"
+          style={{
+            transform: `scaleX(${scrollProgress / 100})`,
+          }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+        >
+          {/* Main electric gradient bar with animated glow */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300"
+            animate={{
+              boxShadow: [
+                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5)',
+                '0 0 15px rgba(52, 211, 153, 1), 0 0 30px rgba(52, 211, 153, 0.7)',
+                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5)',
+              ],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+
+          {/* Animated electric shimmer traveling along the bar */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40"
+            animate={{
+              x: ['-100%', '200%'],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+
+          {/* Electric crackle effect at the leading edge */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent via-white to-emerald-200 opacity-60" />
+
+          {/* Pulsing intensity at the edge */}
+          <motion.div
+            className="absolute right-0 top-0 bottom-0 w-3"
+            style={{
+              background: 'linear-gradient(90deg, rgba(52, 211, 153, 0) 0%, rgba(255, 255, 255, 0.9) 100%)',
+            }}
+            animate={{
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        </motion.div>
+
+        {/* Lightning flash at milestones */}
+        {showLightning && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 0.3 }}
+            style={{
+              boxShadow: '0 0 30px rgba(52, 211, 153, 1), 0 0 50px rgba(52, 211, 153, 0.6)'
+            }}
+          />
+        )}
+      </div>
+    </>
   );
 }
 
@@ -317,6 +480,7 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
   const ref = useRef(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -331,9 +495,14 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
     setRotateY(rotateYValue);
   };
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
   const handleMouseLeave = () => {
     setRotateX(0);
     setRotateY(0);
+    setIsHovered(false);
   };
 
   return (
@@ -345,6 +514,7 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
       viewport={{ margin: "-50px", amount: 0.3 }}
       transition={{ duration: 0.6, ease: "easeOut", delay }}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className="group relative overflow-hidden rounded-2xl border border-emerald-300/10 bg-emerald-900/30 backdrop-blur-md p-6 md:p-8"
       style={{
@@ -353,6 +523,9 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
         transition: "transform 0.1s ease-out",
       }}
     >
+      {/* Lightning Arc Effect */}
+      <LightningArc isActive={isHovered} />
+
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
         <div className="absolute -inset-40 bg-gradient-to-br from-emerald-500/10 via-emerald-400/10 to-emerald-300/10 blur-2xl" />
       </div>
@@ -411,6 +584,363 @@ function TypewriterText({ text, className = "", delay = 0 }) {
         />
       )}
     </span>
+  );
+}
+
+// ============================================================================
+// LIGHTNING ARC EFFECT
+// ============================================================================
+function LightningArc({ isActive = false }) {
+  const [arcs, setArcs] = useState([]);
+
+  useEffect(() => {
+    if (!isActive) {
+      setArcs([]);
+      return;
+    }
+
+    // Generate 3-5 random lightning arcs
+    const numArcs = Math.floor(Math.random() * 3) + 3;
+    const newArcs = Array.from({ length: numArcs }, (_, i) => {
+      const startX = Math.random() * 100;
+      const startY = i < 2 ? 0 : (i === 2 ? Math.random() * 50 : Math.random() * 100);
+      const endX = Math.random() * 100;
+      const endY = i < 2 ? 100 : (i === 2 ? Math.random() * 50 + 50 : Math.random() * 100);
+
+      // Create branching lightning path
+      const midX1 = startX + (endX - startX) * 0.3 + (Math.random() - 0.5) * 30;
+      const midY1 = startY + (endY - startY) * 0.3 + (Math.random() - 0.5) * 20;
+      const midX2 = startX + (endX - startX) * 0.6 + (Math.random() - 0.5) * 30;
+      const midY2 = startY + (endY - startY) * 0.6 + (Math.random() - 0.5) * 20;
+
+      return {
+        id: i,
+        path: `M ${startX} ${startY} Q ${midX1} ${midY1} ${(startX + endX) / 2} ${(startY + endY) / 2} Q ${midX2} ${midY2} ${endX} ${endY}`,
+        delay: i * 0.05,
+      };
+    });
+    setArcs(newArcs);
+  }, [isActive]);
+
+  if (!isActive) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+        <defs>
+          <filter id="lightningGlow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        {arcs.map((arc) => (
+          <motion.g key={arc.id}>
+            {/* Outer glow */}
+            <motion.path
+              d={arc.path}
+              stroke="#34d399"
+              strokeWidth="3"
+              fill="none"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: [0, 0.6, 0] }}
+              transition={{
+                duration: 0.3,
+                delay: arc.delay,
+                ease: "easeOut"
+              }}
+              filter="url(#lightningGlow)"
+            />
+            {/* Inner white core */}
+            <motion.path
+              d={arc.path}
+              stroke="#ffffff"
+              strokeWidth="1"
+              fill="none"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: [0, 1, 0] }}
+              transition={{
+                duration: 0.3,
+                delay: arc.delay,
+                ease: "easeOut"
+              }}
+            />
+          </motion.g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+// ============================================================================
+// PLASMA BORDER EFFECT
+// ============================================================================
+function PlasmaBorder({ children, className = "" }) {
+  return (
+    <div className={`relative ${className}`}>
+      {/* Animated plasma border */}
+      <div className="absolute -inset-[2px] rounded-2xl overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, #34d399 25%, #ffffff 50%, #34d399 75%, transparent 100%)',
+            backgroundSize: '200% 100%',
+          }}
+          animate={{
+            backgroundPosition: ['0% 0%', '200% 0%'],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+        <div
+          className="absolute inset-[2px] rounded-2xl"
+          style={{
+            background: 'linear-gradient(to bottom, rgb(6, 78, 59), rgb(4, 47, 46))',
+          }}
+        />
+      </div>
+      {/* Glow effect */}
+      <motion.div
+        className="absolute -inset-[2px] rounded-2xl pointer-events-none"
+        style={{
+          boxShadow: '0 0 20px rgba(52, 211, 153, 0.4)',
+        }}
+        animate={{
+          boxShadow: [
+            '0 0 20px rgba(52, 211, 153, 0.4)',
+            '0 0 30px rgba(52, 211, 153, 0.6)',
+            '0 0 20px rgba(52, 211, 153, 0.4)',
+          ],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      {/* Content */}
+      <div className="relative">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// LIGHTNING BUTTON - Button with lightning arc effects
+// ============================================================================
+function LightningButton({ children, className = "", href, onClick, ...props }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const Component = href ? 'a' : 'button';
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  return (
+    <Component
+      href={href}
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`relative inline-flex items-center gap-2 overflow-hidden ${className}`}
+      {...props}
+    >
+      {/* Lightning Arc Effect */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+        {isHovered && <LightningArc isActive={true} />}
+      </div>
+      {children}
+    </Component>
+  );
+}
+
+// ============================================================================
+// LOGO ELECTRIC HEARTBEAT 💚⚡
+// ============================================================================
+function LogoHeartbeat({ children }) {
+  return (
+    <motion.div
+      className="relative"
+      animate={{
+        filter: [
+          'drop-shadow(0 0 8px rgba(52, 211, 153, 0.4))',
+          'drop-shadow(0 0 12px rgba(52, 211, 153, 0.6))',
+          'drop-shadow(0 0 8px rgba(52, 211, 153, 0.4))',
+        ],
+      }}
+      transition={{
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// NAV ELECTRIC UNDERLINE ⚡
+// ============================================================================
+function NavLink({ children, href, onClick, className = "" }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      onMouseEnter={() => {
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`relative ${className}`}
+    >
+      {children}
+      {/* Electric underline */}
+      <motion.div
+        className="absolute -bottom-1 left-0 right-0 h-[2px]"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={isHovered ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        style={{
+          background: 'linear-gradient(90deg, transparent, #34d399, transparent)',
+          boxShadow: '0 0 8px rgba(52, 211, 153, 0.8)',
+        }}
+      />
+    </a>
+  );
+}
+
+// ============================================================================
+// FORM INPUT ELECTRIC GLOW ⚡✨
+// ============================================================================
+function ElectricInput({ className = "", ...props }) {
+  const [isFocused, setIsFocused] = useState(false);
+
+  return (
+    <motion.input
+      {...props}
+      onFocus={(e) => {
+        setIsFocused(true);
+        props.onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        setIsFocused(false);
+        props.onBlur?.(e);
+      }}
+      className={className}
+      animate={isFocused ? {
+        boxShadow: [
+          '0 0 0px rgba(52, 211, 153, 0)',
+          '0 0 12px rgba(52, 211, 153, 0.6)',
+          '0 0 8px rgba(52, 211, 153, 0.4)',
+        ],
+      } : {}}
+      transition={{ duration: 0.5 }}
+    />
+  );
+}
+
+function ElectricTextarea({ className = "", ...props }) {
+  const [isFocused, setIsFocused] = useState(false);
+
+  return (
+    <motion.textarea
+      {...props}
+      onFocus={(e) => {
+        setIsFocused(true);
+        props.onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        setIsFocused(false);
+        props.onBlur?.(e);
+      }}
+      className={className}
+      animate={isFocused ? {
+        boxShadow: [
+          '0 0 0px rgba(52, 211, 153, 0)',
+          '0 0 12px rgba(52, 211, 153, 0.6)',
+          '0 0 8px rgba(52, 211, 153, 0.4)',
+        ],
+      } : {}}
+      transition={{ duration: 0.5 }}
+    />
+  );
+}
+
+// ============================================================================
+// SECTION POWER-ON TRANSITION ⚡🔌
+// ============================================================================
+function PowerOnSection({ children, id, eyebrow, title }) {
+  const [isPoweredOn, setIsPoweredOn] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isPoweredOn) {
+          setIsPoweredOn(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isPoweredOn]);
+
+  return (
+    <section ref={sectionRef} id={id} className="relative py-16 md:py-24">
+      {/* Power-on circuit traces */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-[2px]"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={isPoweredOn ? { scaleX: 1, opacity: 1 } : {}}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        style={{
+          background: 'linear-gradient(90deg, transparent, #34d399, transparent)',
+          boxShadow: '0 0 10px rgba(52, 211, 153, 0.6)',
+          transformOrigin: 'center',
+        }}
+      />
+
+      <div className="container mx-auto max-w-6xl px-4 relative z-10">
+        {eyebrow && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={isPoweredOn ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-2 text-sm text-emerald-400 tracking-wider uppercase font-semibold"
+            style={{
+              textShadow: '0 0 10px rgba(52, 211, 153, 0.5)',
+            }}
+          >
+            {eyebrow}
+          </motion.div>
+        )}
+        {title && (
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={isPoweredOn ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mb-12 text-3xl md:text-4xl font-semibold text-emerald-50"
+          >
+            {title}
+          </motion.h2>
+        )}
+        {children}
+      </div>
+    </section>
   );
 }
 
@@ -573,80 +1103,85 @@ function ContactForm() {
   };
 
   return (
-    <motion.form
+    <motion.div
       initial={{ opacity: 0, x: 30 }}
       whileInView={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 30 }}
       viewport={{ margin: "-100px", amount: 0.3 }}
       transition={{ duration: 0.7 }}
-      onSubmit={handleSubmit}
-      className="bg-emerald-900/40 backdrop-blur rounded-xl border border-emerald-300/10 p-6"
     >
-      <div className="grid grid-cols-2 gap-4">
-        <label className="col-span-2">
-          <span className="text-sm">Your name</span>
-          <input 
-            name="name"
-            value={formState.name}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2" 
-            required 
+      <PlasmaBorder>
+        <form
+          onSubmit={handleSubmit}
+          className="bg-emerald-900/40 backdrop-blur rounded-xl p-6"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <label className="col-span-2">
+              <span className="text-sm">Your name</span>
+              <ElectricInput
+                name="name"
+                value={formState.name}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                required
+                disabled={isSubmitting}
+              />
+            </label>
+            <label className="col-span-2 md:col-span-1">
+              <span className="text-sm">Email</span>
+              <ElectricInput
+                type="email"
+                name="email"
+                value={formState.email}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                required
+                disabled={isSubmitting}
+              />
+            </label>
+            <label className="col-span-2 md:col-span-1">
+              <span className="text-sm">Company</span>
+              <ElectricInput
+                name="company"
+                value={formState.company}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                disabled={isSubmitting}
+              />
+            </label>
+            <label className="col-span-2">
+              <span className="text-sm">What are you building?</span>
+              <ElectricTextarea
+                name="message"
+                value={formState.message}
+                onChange={handleChange}
+                rows={4}
+                className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
+                disabled={isSubmitting}
+              />
+            </label>
+          </div>
+
+          {submitStatus && (
+            <div className={`mt-4 p-3 rounded-md ${
+              submitStatus.type === 'success'
+                ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-200'
+                : 'bg-red-500/20 border border-red-500/30 text-red-200'
+            }`}>
+              {submitStatus.message}
+            </div>
+          )}
+
+          <LightningButton
+            type="submit"
             disabled={isSubmitting}
-          />
-        </label>
-        <label className="col-span-2 md:col-span-1">
-          <span className="text-sm">Email</span>
-          <input
-            type="email"
-            name="email"
-            value={formState.email}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2"
-            required
-            disabled={isSubmitting}
-          />
-        </label>
-        <label className="col-span-2 md:col-span-1">
-          <span className="text-sm">Company</span>
-          <input 
-            name="company"
-            value={formState.company}
-            onChange={handleChange}
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2" 
-            disabled={isSubmitting}
-          />
-        </label>
-        <label className="col-span-2">
-          <span className="text-sm">What are you building?</span>
-          <textarea 
-            name="message"
-            value={formState.message}
-            onChange={handleChange}
-            rows={4} 
-            className="mt-1 w-full rounded-md bg-emerald-950/50 border border-emerald-300/10 px-3 py-2" 
-            disabled={isSubmitting}
-          />
-        </label>
-      </div>
-      
-      {submitStatus && (
-        <div className={`mt-4 p-3 rounded-md ${
-          submitStatus.type === 'success' 
-            ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-200' 
-            : 'bg-red-500/20 border border-red-500/30 text-red-200'
-        }`}>
-          {submitStatus.message}
-        </div>
-      )}
-      
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-4 inline-flex items-center gap-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-semibold px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? 'Sending...' : 'Send'} <ArrowRight size={16} />
-      </button>
-    </motion.form>
+            className="mt-4 rounded-md bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-semibold px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed z-10"
+          >
+            {isSubmitting ? 'Sending...' : 'Send'} <ArrowRight size={16} />
+          </LightningButton>
+        </form>
+      </PlasmaBorder>
+    </motion.div>
   );
 }
 
@@ -695,12 +1230,14 @@ export default function Page() {
       <header className="sticky top-0 z-40 backdrop-blur-md bg-emerald-950/80 border-b border-emerald-300/10">
         <div className="container mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img 
-              src="/logo.png" 
-              alt="Emerald Grove Digital Logo" 
-              className="w-[50px] h-[50px] object-contain"
-            />
-            <span className="font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-emerald-400 to-amber-300" 
+            <LogoHeartbeat>
+              <img
+                src="/logo.png"
+                alt="Emerald Grove Digital Logo"
+                className="w-[50px] h-[50px] object-contain"
+              />
+            </LogoHeartbeat>
+            <span className="font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-emerald-400 to-amber-300"
                   style={{
                     textShadow: '0 0 20px rgba(52, 211, 153, 0.3)',
                     filter: 'drop-shadow(0 0 10px rgba(52, 211, 153, 0.2))',
@@ -709,24 +1246,38 @@ export default function Page() {
             </span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#about" onClick={(e) => handleNavClick(e, "about")} className="hover:text-emerald-200">
+            <NavLink href="#about" onClick={(e) => handleNavClick(e, "about")} className="hover:text-emerald-200">
               About
-            </a>
-            <a href="#services" onClick={(e) => handleNavClick(e, "services")} className="hover:text-emerald-200">
+            </NavLink>
+            <NavLink href="#services" onClick={(e) => handleNavClick(e, "services")} className="hover:text-emerald-200">
               Services
-            </a>
-            <a href="#work" onClick={(e) => handleNavClick(e, "work")} className="hover:text-emerald-200">
+            </NavLink>
+            <NavLink href="#work" onClick={(e) => handleNavClick(e, "work")} className="hover:text-emerald-200">
               Work
-            </a>
-            <a href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="hover:text-emerald-200">
+            </NavLink>
+            <NavLink href="#contact" onClick={(e) => handleNavClick(e, "contact")} className="hover:text-emerald-200">
               Contact
-            </a>
-            <a
+            </NavLink>
+            <LightningButton
               href="/ai-playground"
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500 text-emerald-950 font-semibold hover:bg-emerald-400"
+              className="px-3 py-1.5 rounded-full bg-emerald-500 text-emerald-950 font-semibold hover:bg-emerald-400 relative"
             >
-              <Sparkles size={14} /> Playground
-            </a>
+              <motion.div
+                className="absolute inset-0 bg-emerald-400 rounded-full"
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <span className="relative flex items-center gap-2">
+                <Sparkles size={14} /> Playground
+              </span>
+            </LightningButton>
           </nav>
           <button className="md:hidden p-2" onClick={() => setNavOpen((s) => !s)}>
             {navOpen ? <X /> : <Menu />}
@@ -779,56 +1330,59 @@ export default function Page() {
 
         {/* Floating accent shapes - static */}
         <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-400/5 blur-3xl pointer-events-none" />
-        
+
         <div className="container mx-auto max-w-6xl px-4 py-24 md:py-36 relative">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-4xl md:text-6xl font-semibold tracking-tight text-emerald-50"
-          >
-            Where{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-100">
-              AI
-            </span>{" "}
-            meets
-            <br />
-            <TypewriterText
-              text="organic imagination"
-              className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
-              delay={800}
-            />
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-5 max-w-2xl text-emerald-100/80 leading-relaxed"
-          >
-            We cultivate intelligent products, lucid interfaces, and durable systems. Creativity, simplicity, and
-            function in perfect balance.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-8 flex flex-wrap items-center gap-3"
-          >
-            <a
-              href="#contact"
-              onClick={(e) => handleNavClick(e, "contact")}
-              className="inline-flex items-center gap-2 rounded-full px-5 py-3 bg-emerald-500 text-emerald-950 font-semibold shadow hover:bg-emerald-400"
+          {/* Plasma Border around hero content */}
+          <PlasmaBorder className="p-8 md:p-12">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-6xl font-semibold tracking-tight text-emerald-50"
             >
-              Start a project <ArrowRight size={16} />
-            </a>
-            <a
-              href="#work"
-              onClick={(e) => handleNavClick(e, "work")}
-              className="inline-flex items-center gap-2 rounded-full px-5 py-3 border border-emerald-300/20 hover:bg-emerald-800/30"
+              Where{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-100">
+                AI
+              </span>{" "}
+              meets
+              <br />
+              <TypewriterText
+                text="organic imagination"
+                className="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
+                delay={800}
+              />
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mt-5 max-w-2xl text-emerald-100/80 leading-relaxed"
             >
-              View work <Play size={16} />
-            </a>
-          </motion.div>
+              We cultivate intelligent products, lucid interfaces, and durable systems. Creativity, simplicity, and
+              function in perfect balance.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="mt-8 flex flex-wrap items-center gap-3"
+            >
+              <LightningButton
+                href="#contact"
+                onClick={(e) => handleNavClick(e, "contact")}
+                className="rounded-full px-5 py-3 bg-emerald-500 text-emerald-950 font-semibold shadow hover:bg-emerald-400 z-10"
+              >
+                Start a project <ArrowRight size={16} />
+              </LightningButton>
+              <LightningButton
+                href="#work"
+                onClick={(e) => handleNavClick(e, "work")}
+                className="rounded-full px-5 py-3 border border-emerald-300/20 hover:bg-emerald-800/30 z-10"
+              >
+                View work <Play size={16} />
+              </LightningButton>
+            </motion.div>
+          </PlasmaBorder>
         </div>
       </section>
 
@@ -864,7 +1418,7 @@ export default function Page() {
 
       {/* SERVICES SECTION */}
       <Section id="services" eyebrow="Services" title="What we cultivate">
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+        <div className="relative grid md:grid-cols-3 gap-6 md:gap-8">
           <TiltCard
             icon={Sparkles}
             title="AI Product Design"
