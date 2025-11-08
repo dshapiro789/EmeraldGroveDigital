@@ -468,31 +468,59 @@ function ScrollProgress() {
 
   return (
     <>
-      {/* Electric progress bar */}
+      {/* Electrified progress bar */}
       <div className="fixed top-0 left-0 right-0 h-1 z-50 pointer-events-none">
         <motion.div
-          className="h-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 origin-left relative"
+          className="h-full origin-left relative"
           style={{
             transform: `scaleX(${scrollProgress / 100})`,
-            boxShadow: '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.4)'
           }}
           transition={{ duration: 0.15, ease: "easeOut" }}
         >
-          {/* Glowing leading edge */}
-          <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-r from-transparent via-white to-transparent opacity-80" />
-
-          {/* Electric pulse at the edge */}
+          {/* Main electric gradient bar with animated glow */}
           <motion.div
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full"
-            style={{
-              boxShadow: '0 0 8px rgba(255, 255, 255, 1), 0 0 12px rgba(52, 211, 153, 0.8)'
-            }}
+            className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300"
             animate={{
-              scale: [1, 1.5, 1],
-              opacity: [1, 0.6, 1],
+              boxShadow: [
+                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5)',
+                '0 0 15px rgba(52, 211, 153, 1), 0 0 30px rgba(52, 211, 153, 0.7)',
+                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5)',
+              ],
             }}
             transition={{
-              duration: 1,
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+
+          {/* Animated electric shimmer traveling along the bar */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40"
+            animate={{
+              x: ['-100%', '200%'],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+
+          {/* Electric crackle effect at the leading edge */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent via-white to-emerald-200 opacity-60" />
+
+          {/* Pulsing intensity at the edge */}
+          <motion.div
+            className="absolute right-0 top-0 bottom-0 w-3"
+            style={{
+              background: 'linear-gradient(90deg, rgba(52, 211, 153, 0) 0%, rgba(255, 255, 255, 0.9) 100%)',
+            }}
+            animate={{
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              duration: 0.8,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -507,7 +535,7 @@ function ScrollProgress() {
             animate={{ opacity: [0, 1, 0] }}
             transition={{ duration: 0.3 }}
             style={{
-              boxShadow: '0 0 20px rgba(52, 211, 153, 1)'
+              boxShadow: '0 0 30px rgba(52, 211, 153, 1), 0 0 50px rgba(52, 211, 153, 0.6)'
             }}
           />
         )}
