@@ -38,230 +38,6 @@ import MeshGradientElegant from '../components/MeshGradientElegant';
  */
 
 // ============================================================================
-// ELECTRIC SOUND EFFECTS SYSTEM ⚡🔊
-// ============================================================================
-const useElectricSounds = () => {
-  const audioContextRef = useRef(null);
-  const [soundEnabled, setSoundEnabled] = useState(false);
-
-  useEffect(() => {
-    // Initialize audio context on first user interaction
-    const initAudio = () => {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-        setSoundEnabled(true);
-      }
-    };
-
-    // Enable on first interaction
-    const enableAudio = () => {
-      initAudio();
-      document.removeEventListener('click', enableAudio);
-      document.removeEventListener('touchstart', enableAudio);
-    };
-
-    document.addEventListener('click', enableAudio, { once: true });
-    document.addEventListener('touchstart', enableAudio, { once: true });
-
-    return () => {
-      document.removeEventListener('click', enableAudio);
-      document.removeEventListener('touchstart', enableAudio);
-    };
-  }, []);
-
-  const playElectricSound = useCallback((type = 'zap', volume = 0.15) => {
-    if (!audioContextRef.current || !soundEnabled) return;
-
-    const ctx = audioContextRef.current;
-    const now = ctx.currentTime;
-
-    switch (type) {
-      case 'zap': { // Quick electric zap with white noise burst
-        // Create noise buffer for realistic electric crackle
-        const bufferSize = ctx.sampleRate * 0.06;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          // Decaying white noise
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-
-        const noiseGain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(2000, now);
-        filter.Q.setValueAtTime(1, now);
-
-        noise.connect(filter);
-        filter.connect(noiseGain);
-        noiseGain.connect(ctx.destination);
-
-        noiseGain.gain.setValueAtTime(volume * 0.8, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
-
-        noise.start(now);
-        noise.stop(now + 0.06);
-        break;
-      }
-
-      case 'spark': { // Tiny electric snap
-        const bufferSize = ctx.sampleRate * 0.02;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-        const noiseGain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'highpass';
-        filter.frequency.setValueAtTime(3000, now);
-
-        noise.connect(filter);
-        filter.connect(noiseGain);
-        noiseGain.connect(ctx.destination);
-
-        noiseGain.gain.setValueAtTime(volume * 0.4, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.02);
-
-        noise.start(now);
-        noise.stop(now + 0.02);
-        break;
-      }
-
-      case 'crackle': { // Electric crackle with harmonic distortion
-        // Multiple oscillators for harmonic richness
-        const fundamentalFreq = 150;
-        const duration = 0.1;
-
-        for (let harmonic = 1; harmonic <= 3; harmonic++) {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(fundamentalFreq * harmonic, now);
-          osc.frequency.exponentialRampToValueAtTime(fundamentalFreq * harmonic * 0.5, now + duration);
-
-          gain.gain.setValueAtTime(volume / harmonic, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start(now);
-          osc.stop(now + duration);
-        }
-
-        // Add noise layer for texture
-        const bufferSize = ctx.sampleRate * duration;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * 0.3 * Math.exp(-i / (bufferSize * 0.4));
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-        const noiseGain = ctx.createGain();
-        noiseGain.gain.setValueAtTime(volume * 0.3, now);
-        noise.connect(noiseGain);
-        noiseGain.connect(ctx.destination);
-        noise.start(now);
-        noise.stop(now + duration);
-        break;
-      }
-
-      case 'powerOn': { // Power surge
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(80, now);
-        osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(500, now);
-        filter.frequency.exponentialRampToValueAtTime(2500, now + 0.15);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-
-        gain.gain.setValueAtTime(volume, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-
-        osc.start(now);
-        osc.stop(now + 0.15);
-
-        // Add click at start
-        const clickGain = ctx.createGain();
-        const clickOsc = ctx.createOscillator();
-        clickOsc.frequency.setValueAtTime(2000, now);
-        clickOsc.connect(clickGain);
-        clickGain.connect(ctx.destination);
-        clickGain.gain.setValueAtTime(volume * 0.5, now);
-        clickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.01);
-        clickOsc.start(now);
-        clickOsc.stop(now + 0.01);
-        break;
-      }
-
-      case 'charge': { // Charging up
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.linearRampToValueAtTime(800, now + 0.2);
-
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(600, now);
-        filter.frequency.linearRampToValueAtTime(1200, now + 0.2);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(volume, now + 0.15);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-
-        osc.start(now);
-        osc.stop(now + 0.2);
-        break;
-      }
-
-      case 'pulse': { // Electric hum
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(120, now);
-
-        gain.gain.setValueAtTime(volume * 0.5, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.08);
-        break;
-      }
-    }
-  }, [soundEnabled]);
-
-  return { playSound: playElectricSound, soundEnabled };
-};
-
-// ============================================================================
 // ENHANCED ELECTRIC CURSOR TRAIL WITH SPARKS ⚡✨
 // ============================================================================
 function CursorTrail() {
@@ -269,7 +45,6 @@ function CursorTrail() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isTouchDevice, setIsTouchDevice] = useState(true);
   const particleIdRef = useRef(0);
-  const { playSound } = useElectricSounds();
 
   useEffect(() => {
     const checkTouchDevice = () => {
@@ -297,12 +72,6 @@ function CursorTrail() {
         // Mix of sparkles, leaves, and ELECTRIC SPARKS!
         const rand = Math.random();
         const particleType = rand > 0.7 ? 'spark' : (rand > 0.4 ? 'sparkle' : 'leaf');
-
-        // Play spark sound occasionally
-        if (particleType === 'spark' && currentTime - lastSparkTime > 300) {
-          playSound('spark', 0.05);
-          lastSparkTime = currentTime;
-        }
 
         setParticles((prev) => [
           ...prev.slice(-20), // Keep more particles for richer effect
@@ -345,7 +114,7 @@ function CursorTrail() {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isTouchDevice, playSound]);
+  }, [isTouchDevice]);
 
   if (isTouchDevice) return null;
 
@@ -417,23 +186,23 @@ function EnhancedParticles() {
 
   useEffect(() => {
     setWindowHeight(window.innerHeight);
-    
+
     const handleResize = () => {
       setWindowHeight(window.innerHeight);
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Create multiple types of particles for visual variety
+  // ELECTRIFIED particles with white-hot centers!
   const emeraldParticles = Array.from({ length: 15 }, (_, i) => ({
     id: `emerald-${i}`,
     left: `${Math.random() * 100}%`,
     delay: Math.random() * 5,
     duration: 12 + Math.random() * 8,
-    size: 3 + Math.random() * 3,
-    opacity: 0.4 + Math.random() * 0.4,
+    size: 3 + Math.random() * 4,
+    opacity: 0.5 + Math.random() * 0.4,
   }));
 
   const amberParticles = Array.from({ length: 8 }, (_, i) => ({
@@ -441,21 +210,22 @@ function EnhancedParticles() {
     left: `${Math.random() * 100}%`,
     delay: Math.random() * 5,
     duration: 15 + Math.random() * 10,
-    size: 2 + Math.random() * 2,
-    opacity: 0.3 + Math.random() * 0.3,
+    size: 2 + Math.random() * 3,
+    opacity: 0.4 + Math.random() * 0.3,
   }));
 
-  const sparkleParticles = Array.from({ length: 10 }, (_, i) => ({
-    id: `sparkle-${i}`,
+  // ELECTRIC SPARKS - white-hot energy bolts!
+  const electricSparks = Array.from({ length: 12 }, (_, i) => ({
+    id: `spark-${i}`,
     left: `${Math.random() * 100}%`,
-    delay: Math.random() * 5,
-    duration: 10 + Math.random() * 8,
-    size: 1.5 + Math.random() * 1.5,
+    delay: Math.random() * 6,
+    duration: 8 + Math.random() * 6,
+    size: 2 + Math.random() * 3,
   }));
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-[1]">
-      {/* Emerald particles */}
+      {/* ELECTRIFIED Emerald particles with intense glow */}
       {emeraldParticles.map((p) => (
         <motion.div
           key={p.id}
@@ -465,14 +235,19 @@ function EnhancedParticles() {
             width: p.size,
             height: p.size,
             bottom: '-20px',
-            background: `rgba(52, 211, 153, ${p.opacity})`,
-            boxShadow: `0 0 ${p.size * 2}px rgba(52, 211, 153, ${p.opacity * 0.8})`,
+            background: `radial-gradient(circle, rgba(255, 255, 255, ${p.opacity * 0.6}), rgba(52, 211, 153, ${p.opacity}))`,
+            boxShadow: `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
           }}
           animate={{
             y: [0, -(windowHeight + 100)],
             x: [0, Math.sin(p.id.length) * 80],
             opacity: [0, p.opacity, p.opacity, 0],
-            scale: [1, 1.2, 1],
+            scale: [1, 1.3, 1],
+            boxShadow: [
+              `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
+              `0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 8}px rgba(52, 211, 153, ${p.opacity * 0.7})`,
+              `0 0 ${p.size * 3}px rgba(52, 211, 153, ${p.opacity}), 0 0 ${p.size * 5}px rgba(52, 211, 153, ${p.opacity * 0.5})`,
+            ],
           }}
           transition={{
             duration: p.duration,
@@ -483,7 +258,7 @@ function EnhancedParticles() {
         />
       ))}
 
-      {/* Amber particles */}
+      {/* Electric amber sparks with white-hot centers */}
       {amberParticles.map((p) => (
         <motion.div
           key={p.id}
@@ -493,14 +268,19 @@ function EnhancedParticles() {
             width: p.size,
             height: p.size,
             bottom: '-20px',
-            background: `rgba(252, 211, 77, ${p.opacity})`,
-            boxShadow: `0 0 ${p.size * 3}px rgba(252, 211, 77, ${p.opacity * 0.6})`,
+            background: `radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(252, 211, 77, ${p.opacity}))`,
+            boxShadow: `0 0 ${p.size * 4}px rgba(252, 211, 77, ${p.opacity}), 0 0 ${p.size * 6}px rgba(252, 211, 77, ${p.opacity * 0.6})`,
           }}
           animate={{
             y: [0, -(windowHeight + 100)],
             x: [0, Math.cos(p.id.length) * 60],
             opacity: [0, p.opacity, p.opacity, 0],
-            scale: [1, 1.3, 1],
+            scale: [1, 1.5, 1],
+            filter: [
+              'brightness(1)',
+              'brightness(1.5)',
+              'brightness(1)',
+            ],
           }}
           transition={{
             duration: p.duration,
@@ -511,32 +291,69 @@ function EnhancedParticles() {
         />
       ))}
 
-      {/* Sparkle particles */}
-      {sparkleParticles.map((p) => (
+      {/* ELECTRIC SPARKS - White-hot energy with emerald trails! ⚡ */}
+      {electricSparks.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full"
+          className="absolute"
           style={{
             left: p.left,
-            width: p.size,
-            height: p.size,
             bottom: '-20px',
-            background: 'rgba(110, 231, 183, 0.6)',
-            boxShadow: '0 0 8px rgba(110, 231, 183, 0.8)',
           }}
-          animate={{
-            y: [0, -(windowHeight + 100)],
-            x: [0, (Math.random() - 0.5) * 100],
-            opacity: [0, 0.8, 0.8, 0],
-            scale: [1, 1.5, 0.5, 1],
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+        >
+          {/* White-hot core */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: p.size,
+              height: p.size,
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.8), rgba(52, 211, 153, 0.6))',
+              boxShadow: '0 0 12px rgba(255, 255, 255, 1), 0 0 20px rgba(52, 211, 153, 0.8), 0 0 30px rgba(52, 211, 153, 0.4)',
+            }}
+            animate={{
+              y: [0, -(windowHeight + 100)],
+              x: [0, (Math.random() - 0.5) * 120],
+              scale: [1, 1.8, 0.8, 1.2, 1],
+              opacity: [0, 1, 1, 0.6, 0],
+              filter: [
+                'brightness(1.5)',
+                'brightness(2)',
+                'brightness(1.5)',
+                'brightness(2)',
+                'brightness(1)',
+              ],
+            }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+          {/* Electric trail */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: p.size * 1.5,
+              height: p.size * 1.5,
+              background: 'radial-gradient(circle, rgba(52, 211, 153, 0.4), transparent)',
+              left: -p.size * 0.25,
+              top: -p.size * 0.25,
+            }}
+            animate={{
+              y: [0, -(windowHeight + 100)],
+              x: [0, (Math.random() - 0.5) * 120],
+              opacity: [0, 0.5, 0.5, 0],
+              scale: [1.5, 2, 1.5],
+            }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        </motion.div>
       ))}
     </div>
   );
@@ -551,7 +368,6 @@ function EnhancedParticles() {
 function ScrollProgress() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showLightning, setShowLightning] = useState(false);
-  const { playSound } = useElectricSounds();
   const lastMilestone = useRef(0);
 
   useEffect(() => {
@@ -564,7 +380,6 @@ function ScrollProgress() {
       const currentMilestone = Math.floor(progress / 25);
       if (currentMilestone > lastMilestone.current && currentMilestone <= 4) {
         setShowLightning(true);
-        playSound('zap', 0.1);
         setTimeout(() => setShowLightning(false), 300);
         lastMilestone.current = currentMilestone;
       }
@@ -572,7 +387,7 @@ function ScrollProgress() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [playSound]);
+  }, []);
 
   return (
     <>
@@ -660,7 +475,6 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const { playSound } = useElectricSounds();
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -677,7 +491,6 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    playSound('crackle', 0.08);
   };
 
   const handleMouseLeave = () => {
@@ -917,13 +730,11 @@ function PlasmaBorder({ children, className = "" }) {
 // ============================================================================
 function LightningButton({ children, className = "", href, onClick, ...props }) {
   const [isHovered, setIsHovered] = useState(false);
-  const { playSound } = useElectricSounds();
 
   const Component = href ? 'a' : 'button';
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    playSound('zap', 0.1);
   };
 
   return (
@@ -974,7 +785,6 @@ function LogoHeartbeat({ children }) {
 // ============================================================================
 function NavLink({ children, href, onClick, className = "" }) {
   const [isHovered, setIsHovered] = useState(false);
-  const { playSound } = useElectricSounds();
 
   return (
     <a
@@ -982,7 +792,6 @@ function NavLink({ children, href, onClick, className = "" }) {
       onClick={onClick}
       onMouseEnter={() => {
         setIsHovered(true);
-        playSound('spark', 0.06);
       }}
       onMouseLeave={() => setIsHovered(false)}
       className={`relative ${className}`}
@@ -1008,14 +817,12 @@ function NavLink({ children, href, onClick, className = "" }) {
 // ============================================================================
 function ElectricInput({ className = "", ...props }) {
   const [isFocused, setIsFocused] = useState(false);
-  const { playSound } = useElectricSounds();
 
   return (
     <motion.input
       {...props}
       onFocus={(e) => {
         setIsFocused(true);
-        playSound('pulse', 0.08);
         props.onFocus?.(e);
       }}
       onBlur={(e) => {
@@ -1037,14 +844,12 @@ function ElectricInput({ className = "", ...props }) {
 
 function ElectricTextarea({ className = "", ...props }) {
   const [isFocused, setIsFocused] = useState(false);
-  const { playSound } = useElectricSounds();
 
   return (
     <motion.textarea
       {...props}
       onFocus={(e) => {
         setIsFocused(true);
-        playSound('pulse', 0.08);
         props.onFocus?.(e);
       }}
       onBlur={(e) => {
@@ -1069,7 +874,6 @@ function ElectricTextarea({ className = "", ...props }) {
 // ============================================================================
 function PowerOnSection({ children, id, eyebrow, title }) {
   const [isPoweredOn, setIsPoweredOn] = useState(false);
-  const { playSound } = useElectricSounds();
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -1077,7 +881,6 @@ function PowerOnSection({ children, id, eyebrow, title }) {
       ([entry]) => {
         if (entry.isIntersecting && !isPoweredOn) {
           setIsPoweredOn(true);
-          playSound('powerOn', 0.12);
         }
       },
       { threshold: 0.2 }
@@ -1088,7 +891,7 @@ function PowerOnSection({ children, id, eyebrow, title }) {
     }
 
     return () => observer.disconnect();
-  }, [isPoweredOn, playSound]);
+  }, [isPoweredOn]);
 
   return (
     <section ref={sectionRef} id={id} className="relative py-16 md:py-24">
@@ -1132,171 +935,6 @@ function PowerOnSection({ children, id, eyebrow, title }) {
         {children}
       </div>
     </section>
-  );
-}
-
-// ============================================================================
-// CIRCUIT BOARD TRACES - Connects service cards
-// ============================================================================
-function CircuitBoardTraces() {
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden">
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ zIndex: 1 }}>
-        <defs>
-          {/* Gradient for the pulse */}
-          <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#34d399" stopOpacity="0"/>
-            <stop offset="50%" stopColor="#34d399" stopOpacity="1"/>
-            <stop offset="100%" stopColor="#34d399" stopOpacity="0"/>
-          </linearGradient>
-          {/* Glow filter */}
-          <filter id="circuitGlow">
-            <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Desktop: Horizontal connections between 3 cards */}
-        <g className="hidden md:block">
-          {/* Connection 1 -> 2 */}
-          <motion.path
-            d="M 33 50 L 66 50"
-            stroke="#34d399"
-            strokeWidth="0.3"
-            fill="none"
-            strokeOpacity="0.3"
-            initial={{ pathLength: 0 }}
-            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
-            filter="url(#circuitGlow)"
-          />
-          {/* Pulse traveling on connection 1 -> 2 */}
-          <motion.circle
-            r="0.8"
-            fill="url(#pulseGradient)"
-            initial={{ opacity: 0 }}
-            animate={isVisible ? {
-              opacity: [0, 1, 1, 0],
-            } : {}}
-            transition={{
-              duration: 2,
-              delay: 2,
-              repeat: Infinity,
-              repeatDelay: 3,
-              ease: "easeInOut",
-            }}
-          >
-            <animateMotion dur="2s" repeatCount="indefinite" begin="2s">
-              <mpath href="#trace1to2" />
-            </animateMotion>
-          </motion.circle>
-          <path id="trace1to2" d="M 33 50 L 66 50" fill="none" />
-
-          {/* Connection 2 -> 3 */}
-          <motion.path
-            d="M 66 50 L 83 50"
-            stroke="#34d399"
-            strokeWidth="0.3"
-            fill="none"
-            strokeOpacity="0.3"
-            initial={{ pathLength: 0 }}
-            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={{ duration: 1.5, delay: 1, ease: "easeInOut" }}
-            filter="url(#circuitGlow)"
-          />
-          {/* Pulse traveling on connection 2 -> 3 */}
-          <motion.circle
-            r="0.8"
-            fill="#34d399"
-            initial={{ opacity: 0 }}
-            animate={isVisible ? {
-              opacity: [0, 1, 1, 0],
-            } : {}}
-            transition={{
-              duration: 2,
-              delay: 2.5,
-              repeat: Infinity,
-              repeatDelay: 3,
-              ease: "easeInOut",
-            }}
-          >
-            <animateMotion dur="2s" repeatCount="indefinite" begin="2.5s">
-              <mpath href="#trace2to3" />
-            </animateMotion>
-          </motion.circle>
-          <path id="trace2to3" d="M 66 50 L 83 50" fill="none" />
-
-          {/* Circuit nodes (dots at connection points) */}
-          <motion.circle
-            cx="33" cy="50" r="0.6"
-            fill="#34d399"
-            initial={{ scale: 0 }}
-            animate={isVisible ? { scale: [0, 1.5, 1] } : { scale: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            filter="url(#circuitGlow)"
-          />
-          <motion.circle
-            cx="66" cy="50" r="0.6"
-            fill="#34d399"
-            initial={{ scale: 0 }}
-            animate={isVisible ? { scale: [0, 1.5, 1] } : { scale: 0 }}
-            transition={{ duration: 0.5, delay: 1 }}
-            filter="url(#circuitGlow)"
-          />
-        </g>
-
-        {/* Mobile: Vertical connections */}
-        <g className="block md:hidden">
-          {/* Connection 1 -> 2 */}
-          <motion.path
-            d="M 50 33 L 50 50"
-            stroke="#34d399"
-            strokeWidth="0.3"
-            fill="none"
-            strokeOpacity="0.3"
-            initial={{ pathLength: 0 }}
-            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={{ duration: 1, delay: 0.5, ease: "easeInOut" }}
-            filter="url(#circuitGlow)"
-          />
-          {/* Connection 2 -> 3 */}
-          <motion.path
-            d="M 50 50 L 50 66"
-            stroke="#34d399"
-            strokeWidth="0.3"
-            fill="none"
-            strokeOpacity="0.3"
-            initial={{ pathLength: 0 }}
-            animate={isVisible ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={{ duration: 1, delay: 1, ease: "easeInOut" }}
-            filter="url(#circuitGlow)"
-          />
-        </g>
-      </svg>
-    </div>
   );
 }
 
@@ -1775,9 +1413,6 @@ export default function Page() {
       {/* SERVICES SECTION */}
       <Section id="services" eyebrow="Services" title="What we cultivate">
         <div className="relative grid md:grid-cols-3 gap-6 md:gap-8">
-          {/* Electric Circuit Board Traces */}
-          <CircuitBoardTraces />
-
           <TiltCard
             icon={Sparkles}
             title="AI Product Design"
