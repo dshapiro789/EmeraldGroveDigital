@@ -656,9 +656,8 @@ function CircuitBoardTraces() {
           <motion.circle
             r="4"
             fill="url(#pulseGradient)"
-            initial={{ offsetDistance: '0%', opacity: 0 }}
+            initial={{ opacity: 0 }}
             animate={isVisible ? {
-              offsetDistance: ['0%', '100%'],
               opacity: [0, 1, 1, 0],
             } : {}}
             transition={{
@@ -691,9 +690,8 @@ function CircuitBoardTraces() {
           <motion.circle
             r="4"
             fill="#34d399"
-            initial={{ offsetDistance: '0%', opacity: 0 }}
+            initial={{ opacity: 0 }}
             animate={isVisible ? {
-              offsetDistance: ['0%', '100%'],
               opacity: [0, 1, 1, 0],
             } : {}}
             transition={{
