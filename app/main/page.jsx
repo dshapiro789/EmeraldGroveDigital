@@ -406,44 +406,46 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
   };
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 50 }}
-      viewport={{ margin: "-50px", amount: 0.3 }}
-      transition={{ duration: 0.6, ease: "easeOut", delay }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="group relative overflow-hidden rounded-2xl border border-emerald-300/10 bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8"
-      style={{
-        transformStyle: isMobile ? "flat" : "preserve-3d",
-        transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-        transition: "transform 0.1s ease-out",
-        willChange: isMobile ? "auto" : "transform",
-      }}
-    >
-      {/* Lightning Arc Effect */}
-      <LightningArc isActive={isHovered} />
+    <PlasmaBorder>
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        viewport={{ margin: "-50px", amount: 0.3 }}
+        transition={{ duration: 0.6, ease: "easeOut", delay }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="group relative overflow-hidden rounded-2xl bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8"
+        style={{
+          transformStyle: isMobile ? "flat" : "preserve-3d",
+          transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+          transition: "transform 0.1s ease-out",
+          willChange: isMobile ? "auto" : "transform",
+        }}
+      >
+        {/* Lightning Arc Effect */}
+        <LightningArc isActive={isHovered} />
 
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="absolute -inset-40 bg-gradient-to-br from-emerald-500/10 via-emerald-400/10 to-emerald-300/10 blur-2xl" />
-      </div>
-      {Icon && (
-        <motion.div
-          className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-400/10 ring-1 ring-emerald-300/20"
-          style={{ transform: "translateZ(20px)" }}
-        >
-          <Icon className="text-emerald-200" size={22} />
-        </motion.div>
-      )}
-      <h3 className="text-xl md:text-2xl font-semibold text-emerald-50">{title}</h3>
-      <p className="mt-2 text-emerald-100/80 leading-relaxed">{desc}</p>
-      <div className="relative z-10">
-        {children}
-      </div>
-    </motion.div>
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <div className="absolute -inset-40 bg-gradient-to-br from-emerald-500/10 via-emerald-400/10 to-emerald-300/10 blur-2xl" />
+        </div>
+        {Icon && (
+          <motion.div
+            className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-400/10 ring-1 ring-emerald-300/20"
+            style={{ transform: "translateZ(20px)" }}
+          >
+            <Icon className="text-emerald-200" size={22} />
+          </motion.div>
+        )}
+        <h3 className="text-xl md:text-2xl font-semibold text-emerald-50">{title}</h3>
+        <p className="mt-2 text-emerald-100/80 leading-relaxed">{desc}</p>
+        <div className="relative z-10">
+          {children}
+        </div>
+      </motion.div>
+    </PlasmaBorder>
   );
 }
 
@@ -835,6 +837,53 @@ function PowerOnSection({ children, id, eyebrow, title }) {
 }
 
 // ============================================================================
+// ELECTRIC PARALLAX SCROLL EFFECT
+// ============================================================================
+function ElectricParallax() {
+  const [scrollY, setScrollY] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Fewer lines on mobile for performance
+  const lineCount = isMobile ? 3 : 5;
+  const lines = Array.from({ length: lineCount }, (_, i) => ({
+    id: i,
+    speed: 0.3 + (i * 0.15), // Different parallax speeds
+    opacity: 0.15 + (i * 0.05),
+    width: 40 + (i * 15), // Varying widths
+  }));
+
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[2]">
+      {lines.map((line) => (
+        <motion.div
+          key={line.id}
+          className="absolute left-1/2 h-[1px]"
+          style={{
+            width: `${line.width}%`,
+            marginLeft: `-${line.width / 2}%`,
+            top: `${20 + (line.id * 20)}%`,
+            background: `linear-gradient(90deg, transparent, rgba(52, 211, 153, ${line.opacity}), transparent)`,
+            transform: `translateY(${scrollY * line.speed}px)`,
+            willChange: 'transform',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ============================================================================
 // SMOOTH SCROLL UTILITY
 // ============================================================================
 const smoothScrollTo = (elementId, offset = 80) => {
@@ -1115,12 +1164,15 @@ export default function Page() {
   return (
     <div className="relative min-h-screen text-emerald-100">
       <ScrollProgress />
-      
+
       {/* Mesh Gradient Background */}
       <MeshGradientElegant />
 
       {/* Enhanced floating particles effect with emerald, amber, and sparkle variations */}
       <EnhancedParticles />
+
+      {/* Electric parallax scroll effect */}
+      <ElectricParallax />
 
       <CursorTrail />
 
