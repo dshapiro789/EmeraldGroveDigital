@@ -39,7 +39,7 @@ const AI_MODELS = [
     name: "Claude 3.5 Sonnet",
     provider: "Anthropic",
     icon: Brain,
-    description: "Most intelligent, best for complex tasks",
+    description: "Intelligent reasoning, best for complex tasks",
     supportsVision: true,
     color: "emerald"
   },
@@ -80,11 +80,11 @@ const AI_MODELS = [
     color: "purple"
   },
   {
-    id: "meta-llama/llama-3.2-90b-vision-instruct",
-    name: "Llama 3.2 Vision",
-    provider: "Meta",
+    id: "moonshotai/kimi-k2-thinking",
+    name: "Kimi K2 Thinking",
+    provider: "MoonshotAI",
     icon: Sparkles,
-    description: "Open source vision model",
+    description: "Most advanced open source reasoning model to date",
     supportsVision: true,
     color: "blue"
   }
