@@ -837,56 +837,75 @@ function PowerOnSection({ children, id, eyebrow, title }) {
 }
 
 // ============================================================================
-// ELECTRIC PARALLAX SCROLL EFFECT
+// SECTION DIVIDER - Electric line that fades in under sections
 // ============================================================================
-function ElectricParallax() {
-  const [scrollY, setScrollY] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+function SectionDivider() {
+  const [isVisible, setIsVisible] = useState(false);
+  const dividerRef = useRef(null);
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
 
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
+    if (dividerRef.current) {
+      observer.observe(dividerRef.current);
+    }
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => observer.disconnect();
   }, []);
 
-  // Hide in hero section (first ~600px of scroll)
-  const heroThreshold = 600;
-  const isInHero = scrollY < heroThreshold;
-  const fadeOpacity = Math.min((scrollY - heroThreshold + 200) / 200, 1);
-
-  // Fewer lines on mobile for performance
-  const lineCount = isMobile ? 3 : 5;
-  const lines = Array.from({ length: lineCount }, (_, i) => ({
-    id: i,
-    speed: 0.3 + (i * 0.15), // Different parallax speeds
-    opacity: (0.15 + (i * 0.05)) * fadeOpacity,
-    width: 40 + (i * 15), // Varying widths
-  }));
-
-  // Don't render at all in hero section for performance
-  if (isInHero) return null;
-
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[2]">
-      {lines.map((line) => (
-        <motion.div
-          key={line.id}
-          className="absolute left-1/2 h-[1px]"
+    <div ref={dividerRef} className="relative py-16 md:py-20 flex items-center justify-center overflow-hidden">
+      <motion.div
+        className="relative w-full max-w-4xl h-[2px]"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={isVisible ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        style={{
+          transformOrigin: 'center',
+        }}
+      >
+        {/* Main bright gradient line */}
+        <div
+          className="absolute inset-0"
           style={{
-            width: `${line.width}%`,
-            marginLeft: `-${line.width / 2}%`,
-            top: `${20 + (line.id * 20)}%`,
-            background: `linear-gradient(90deg, transparent, rgba(52, 211, 153, ${line.opacity}), transparent)`,
-            transform: `translateY(${scrollY * line.speed}px)`,
-            willChange: 'transform',
+            background: 'linear-gradient(90deg, transparent 0%, rgba(52, 211, 153, 0.4) 20%, rgba(255, 255, 255, 0.8) 50%, rgba(52, 211, 153, 0.4) 80%, transparent 100%)',
           }}
         />
-      ))}
+        {/* Intense glow effect */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            boxShadow: '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
+          }}
+          animate={{
+            boxShadow: [
+              '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
+              '0 0 30px rgba(52, 211, 153, 1), 0 0 60px rgba(52, 211, 153, 0.6)',
+              '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
+            ],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        {/* White-hot center */}
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-1"
+          style={{
+            background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent)',
+            filter: 'blur(1px)',
+          }}
+        />
+      </motion.div>
     </div>
   );
 }
@@ -1179,9 +1198,6 @@ export default function Page() {
       {/* Enhanced floating particles effect with emerald, amber, and sparkle variations */}
       <EnhancedParticles />
 
-      {/* Electric parallax scroll effect */}
-      <ElectricParallax />
-
       <CursorTrail />
 
       {/* HEADER */}
@@ -1374,6 +1390,9 @@ export default function Page() {
         </div>
       </Section>
 
+      {/* Electric divider between sections */}
+      <SectionDivider />
+
       {/* SERVICES SECTION */}
       <Section id="services" eyebrow="Services" title="What we cultivate">
         <div className="relative grid md:grid-cols-3 gap-6 md:gap-8">
@@ -1397,6 +1416,9 @@ export default function Page() {
           />
         </div>
       </Section>
+
+      {/* Electric divider between sections */}
+      <SectionDivider />
 
       {/* WORK SECTION */}
       <Section id="work" eyebrow="Work" title="Selected outcomes">
@@ -1447,6 +1469,9 @@ export default function Page() {
           </TiltCard>
         </div>
       </Section>
+
+      {/* Electric divider between sections */}
+      <SectionDivider />
 
       {/* CONTACT SECTION */}
       <Section id="contact" eyebrow="Collaborate" title="Step into the Grove">
