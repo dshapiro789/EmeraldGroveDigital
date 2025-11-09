@@ -254,6 +254,7 @@ function EnhancedParticles() {
             bottom: '-20px',
             background: `rgba(52, 211, 153, ${p.opacity})`,
             filter: `blur(${p.size * 0.3}px)`,
+            willChange: 'transform, opacity',
           }}
           animate={{
             y: [0, -(windowHeight + 100)],
@@ -281,6 +282,7 @@ function EnhancedParticles() {
             bottom: '-20px',
             background: `rgba(252, 211, 77, ${p.opacity})`,
             filter: `blur(${p.size * 0.3}px)`,
+            willChange: 'transform, opacity',
           }}
           animate={{
             y: [0, -(windowHeight + 100)],
@@ -308,6 +310,7 @@ function EnhancedParticles() {
             bottom: '-20px',
             background: 'rgba(110, 231, 183, 0.8)',
             filter: `blur(${p.size * 0.4}px)`,
+            willChange: 'transform, opacity',
           }}
           animate={{
             y: [0, -(windowHeight + 100)],
@@ -357,16 +360,30 @@ function ScrollProgress() {
 }
 
 // ============================================================================
-// 3D TILT CARD COMPONENT
+// 3D TILT CARD COMPONENT (Optimized)
 // ============================================================================
 function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
   const ref = useRef(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const throttleRef = useRef(null);
+
+  useEffect(() => {
+    // Detect mobile to disable 3D tilt
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   const handleMouseMove = (e) => {
-    if (!ref.current) return;
+    if (!ref.current || isMobile) return;
+
+    // Throttle to ~60fps max
+    if (throttleRef.current) return;
+    throttleRef.current = setTimeout(() => {
+      throttleRef.current = null;
+    }, 16);
+
     const rect = ref.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -399,11 +416,12 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="group relative overflow-hidden rounded-2xl border border-emerald-300/10 bg-emerald-900/30 backdrop-blur-md p-6 md:p-8"
+      className="group relative overflow-hidden rounded-2xl border border-emerald-300/10 bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8"
       style={{
-        transformStyle: "preserve-3d",
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transformStyle: isMobile ? "flat" : "preserve-3d",
+        transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
         transition: "transform 0.1s ease-out",
+        willChange: isMobile ? "auto" : "transform",
       }}
     >
       {/* Lightning Arc Effect */}
@@ -482,8 +500,8 @@ function LightningArc({ isActive = false }) {
       return;
     }
 
-    // Generate 3-5 random lightning arcs
-    const numArcs = Math.floor(Math.random() * 3) + 3;
+    // Generate 2-3 random lightning arcs (reduced for performance)
+    const numArcs = Math.floor(Math.random() * 2) + 2;
     const newArcs = Array.from({ length: numArcs }, (_, i) => {
       const startX = Math.random() * 100;
       const startY = i < 2 ? 0 : (i === 2 ? Math.random() * 50 : Math.random() * 100);
@@ -558,7 +576,7 @@ function LightningArc({ isActive = false }) {
 }
 
 // ============================================================================
-// PLASMA BORDER EFFECT
+// PLASMA BORDER EFFECT (Optimized)
 // ============================================================================
 function PlasmaBorder({ children, className = "" }) {
   return (
@@ -570,6 +588,7 @@ function PlasmaBorder({ children, className = "" }) {
           style={{
             background: 'linear-gradient(90deg, transparent 0%, #34d399 25%, #ffffff 50%, #34d399 75%, transparent 100%)',
             backgroundSize: '200% 100%',
+            willChange: 'background-position',
           }}
           animate={{
             backgroundPosition: ['0% 0%', '200% 0%'],
@@ -587,23 +606,11 @@ function PlasmaBorder({ children, className = "" }) {
           }}
         />
       </div>
-      {/* Glow effect */}
-      <motion.div
+      {/* Static glow effect (no animation for performance) */}
+      <div
         className="absolute -inset-[2px] rounded-2xl pointer-events-none"
         style={{
-          boxShadow: '0 0 20px rgba(52, 211, 153, 0.4)',
-        }}
-        animate={{
-          boxShadow: [
-            '0 0 20px rgba(52, 211, 153, 0.4)',
-            '0 0 30px rgba(52, 211, 153, 0.6)',
-            '0 0 20px rgba(52, 211, 153, 0.4)',
-          ],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut",
+          boxShadow: '0 0 25px rgba(52, 211, 153, 0.5)',
         }}
       />
       {/* Content */}
@@ -1118,7 +1125,7 @@ export default function Page() {
       <CursorTrail />
 
       {/* HEADER */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-emerald-950/80 border-b border-emerald-300/10">
+      <header className="sticky top-0 z-40 backdrop-blur-sm bg-emerald-950/95 border-b border-emerald-300/10">
         <div className="container mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <LogoHeartbeat>
