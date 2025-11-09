@@ -27,13 +27,13 @@ const MeshGradientElegant = () => {
         className="absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(52, 211, 153, 0.12), transparent),
-            radial-gradient(ellipse 60% 50% at 20% 80%, rgba(5, 150, 105, 0.09), transparent),
-            radial-gradient(ellipse 60% 60% at 80% 60%, rgba(193, 162, 74, 0.06), transparent)
+            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(52, 211, 153, 0.14), transparent),
+            radial-gradient(ellipse 60% 50% at 20% 80%, rgba(5, 150, 105, 0.11), transparent),
+            radial-gradient(ellipse 60% 60% at 80% 60%, rgba(193, 162, 74, 0.07), transparent)
           `,
         }}
         animate={{
-          opacity: [0.6, 0.75, 0.6],
+          opacity: [0.65, 0.8, 0.65],
         }}
         transition={{
           duration: 8,
@@ -42,13 +42,13 @@ const MeshGradientElegant = () => {
         }}
       />
       
-      {/* Animated orbs - more subtle for better contrast */}
+      {/* Animated orbs - balanced for contrast */}
       <motion.div
         className="absolute w-[600px] h-[600px] rounded-full blur-[120px]"
         style={{
           top: '10%',
           left: '15%',
-          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.20) 0%, transparent 70%)',
           transform: `translateY(${parallaxOffset * 0.5}px)`,
         }}
         animate={{
@@ -68,7 +68,7 @@ const MeshGradientElegant = () => {
         style={{
           top: '40%',
           right: '10%',
-          background: 'radial-gradient(circle, rgba(110, 231, 183, 0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(110, 231, 183, 0.15) 0%, transparent 70%)',
           transform: `translateY(${parallaxOffset * 0.7}px)`,
         }}
         animate={{
@@ -89,7 +89,7 @@ const MeshGradientElegant = () => {
         style={{
           bottom: '15%',
           left: '50%',
-          background: 'radial-gradient(circle, rgba(52, 211, 153, 0.10) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(52, 211, 153, 0.13) 0%, transparent 70%)',
           transform: `translateY(${parallaxOffset * 0.4}px)`,
         }}
         animate={{
@@ -155,11 +155,11 @@ const MeshGradientElegant = () => {
         }}
       />
       
-      {/* Top gradient accent - reduced for darker background */}
+      {/* Top gradient accent - subtle green glow */}
       <div
         className="absolute top-0 left-0 right-0 h-96"
         style={{
-          background: 'linear-gradient(to bottom, rgba(52, 211, 153, 0.05) 0%, transparent 100%)',
+          background: 'linear-gradient(to bottom, rgba(52, 211, 153, 0.07) 0%, transparent 100%)',
         }}
       />
     </div>

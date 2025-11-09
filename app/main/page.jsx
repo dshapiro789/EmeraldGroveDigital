@@ -412,14 +412,15 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
       exit={{ opacity: 0, y: 50 }}
       viewport={{ margin: "-50px", amount: 0.3 }}
       transition={{ duration: 0.6, ease: "easeOut", delay }}
+      className="h-full"
     >
-      <PlasmaBorder>
+      <PlasmaBorder className="h-full">
         <div
           ref={ref}
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          className="group relative overflow-hidden rounded-2xl bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8"
+          className="group relative overflow-hidden rounded-2xl bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8 h-full flex flex-col"
           style={{
             transformStyle: isMobile ? "flat" : "preserve-3d",
             transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
@@ -619,7 +620,7 @@ function PlasmaBorder({ children, className = "" }) {
         }}
       />
       {/* Content */}
-      <div className="relative overflow-hidden rounded-2xl">
+      <div className="relative overflow-hidden rounded-2xl h-full">
         {children}
       </div>
     </div>
