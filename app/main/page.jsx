@@ -407,42 +407,48 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
 
   return (
     <motion.div
-      ref={ref}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 50 }}
       viewport={{ margin: "-50px", amount: 0.3 }}
       transition={{ duration: 0.6, ease: "easeOut", delay }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="group relative overflow-hidden rounded-2xl border border-emerald-300/10 bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8"
-      style={{
-        transformStyle: isMobile ? "flat" : "preserve-3d",
-        transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-        transition: "transform 0.1s ease-out",
-        willChange: isMobile ? "auto" : "transform",
-      }}
+      className="h-full"
     >
-      {/* Lightning Arc Effect */}
-      <LightningArc isActive={isHovered} />
-
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="absolute -inset-40 bg-gradient-to-br from-emerald-500/10 via-emerald-400/10 to-emerald-300/10 blur-2xl" />
-      </div>
-      {Icon && (
-        <motion.div
-          className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-400/10 ring-1 ring-emerald-300/20"
-          style={{ transform: "translateZ(20px)" }}
+      <PlasmaBorder className="h-full">
+        <div
+          ref={ref}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className="group relative overflow-hidden rounded-2xl bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8 h-full flex flex-col"
+          style={{
+            transformStyle: isMobile ? "flat" : "preserve-3d",
+            transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+            transition: "transform 0.1s ease-out",
+            willChange: isMobile ? "auto" : "transform",
+          }}
         >
-          <Icon className="text-emerald-200" size={22} />
-        </motion.div>
-      )}
-      <h3 className="text-xl md:text-2xl font-semibold text-emerald-50">{title}</h3>
-      <p className="mt-2 text-emerald-100/80 leading-relaxed">{desc}</p>
-      <div className="relative z-10">
-        {children}
+        {/* Lightning Arc Effect */}
+        <LightningArc isActive={isHovered} />
+
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <div className="absolute -inset-40 bg-gradient-to-br from-emerald-500/10 via-emerald-400/10 to-emerald-300/10 blur-2xl" />
+        </div>
+        {Icon && (
+          <motion.div
+            className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-400/10 ring-1 ring-emerald-300/20"
+            style={{ transform: "translateZ(20px)" }}
+          >
+            <Icon className="text-emerald-200" size={22} />
+          </motion.div>
+        )}
+        <h3 className="text-xl md:text-2xl font-semibold text-emerald-50">{title}</h3>
+        <p className="mt-2 text-emerald-100/80 leading-relaxed">{desc}</p>
+        <div className="relative z-10">
+          {children}
+        </div>
       </div>
+    </PlasmaBorder>
     </motion.div>
   );
 }
@@ -614,7 +620,7 @@ function PlasmaBorder({ children, className = "" }) {
         }}
       />
       {/* Content */}
-      <div className="relative">
+      <div className="relative overflow-hidden rounded-2xl h-full">
         {children}
       </div>
     </div>
@@ -831,6 +837,79 @@ function PowerOnSection({ children, id, eyebrow, title }) {
         {children}
       </div>
     </section>
+  );
+}
+
+// ============================================================================
+// SECTION DIVIDER - Electric line that fades in under sections
+// ============================================================================
+function SectionDivider() {
+  const [isVisible, setIsVisible] = useState(false);
+  const dividerRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Fade in when scrolling into view, fade out when scrolling away
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.5 }
+    );
+
+    if (dividerRef.current) {
+      observer.observe(dividerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={dividerRef} className="relative py-16 md:py-20 flex items-center justify-center overflow-hidden">
+      <motion.div
+        className="relative w-full max-w-4xl h-[2px]"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={isVisible ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        style={{
+          transformOrigin: 'center',
+        }}
+      >
+        {/* Main bright gradient line */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(52, 211, 153, 0.4) 20%, rgba(255, 255, 255, 0.8) 50%, rgba(52, 211, 153, 0.4) 80%, transparent 100%)',
+          }}
+        />
+        {/* Intense glow effect */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            boxShadow: '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
+          }}
+          animate={{
+            boxShadow: [
+              '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
+              '0 0 30px rgba(52, 211, 153, 1), 0 0 60px rgba(52, 211, 153, 0.6)',
+              '0 0 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.4)',
+            ],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        {/* White-hot center */}
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-1"
+          style={{
+            background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent)',
+            filter: 'blur(1px)',
+          }}
+        />
+      </motion.div>
+    </div>
   );
 }
 
@@ -1115,7 +1194,7 @@ export default function Page() {
   return (
     <div className="relative min-h-screen text-emerald-100">
       <ScrollProgress />
-      
+
       {/* Mesh Gradient Background */}
       <MeshGradientElegant />
 
@@ -1314,6 +1393,9 @@ export default function Page() {
         </div>
       </Section>
 
+      {/* Electric divider between sections */}
+      <SectionDivider />
+
       {/* SERVICES SECTION */}
       <Section id="services" eyebrow="Services" title="What we cultivate">
         <div className="relative grid md:grid-cols-3 gap-6 md:gap-8">
@@ -1337,6 +1419,9 @@ export default function Page() {
           />
         </div>
       </Section>
+
+      {/* Electric divider between sections */}
+      <SectionDivider />
 
       {/* WORK SECTION */}
       <Section id="work" eyebrow="Work" title="Selected outcomes">
@@ -1387,6 +1472,9 @@ export default function Page() {
           </TiltCard>
         </div>
       </Section>
+
+      {/* Electric divider between sections */}
+      <SectionDivider />
 
       {/* CONTACT SECTION */}
       <Section id="contact" eyebrow="Collaborate" title="Step into the Grove">
