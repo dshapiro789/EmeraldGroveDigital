@@ -616,7 +616,7 @@ function PlasmaBorder({ children, className = "" }) {
         }}
       />
       {/* Content */}
-      <div className="relative">
+      <div className="relative overflow-hidden rounded-2xl">
         {children}
       </div>
     </div>
@@ -854,14 +854,22 @@ function ElectricParallax() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Hide in hero section (first ~600px of scroll)
+  const heroThreshold = 600;
+  const isInHero = scrollY < heroThreshold;
+  const fadeOpacity = Math.min((scrollY - heroThreshold + 200) / 200, 1);
+
   // Fewer lines on mobile for performance
   const lineCount = isMobile ? 3 : 5;
   const lines = Array.from({ length: lineCount }, (_, i) => ({
     id: i,
     speed: 0.3 + (i * 0.15), // Different parallax speeds
-    opacity: 0.15 + (i * 0.05),
+    opacity: (0.15 + (i * 0.05)) * fadeOpacity,
     width: 40 + (i * 15), // Varying widths
   }));
+
+  // Don't render at all in hero section for performance
+  if (isInHero) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-[2]">
