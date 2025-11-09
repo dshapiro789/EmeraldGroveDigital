@@ -406,25 +406,27 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
   };
 
   return (
-    <PlasmaBorder>
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 50 }}
-        viewport={{ margin: "-50px", amount: 0.3 }}
-        transition={{ duration: 0.6, ease: "easeOut", delay }}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className="group relative overflow-hidden rounded-2xl bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8"
-        style={{
-          transformStyle: isMobile ? "flat" : "preserve-3d",
-          transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-          transition: "transform 0.1s ease-out",
-          willChange: isMobile ? "auto" : "transform",
-        }}
-      >
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 50 }}
+      viewport={{ margin: "-50px", amount: 0.3 }}
+      transition={{ duration: 0.6, ease: "easeOut", delay }}
+    >
+      <PlasmaBorder>
+        <div
+          ref={ref}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className="group relative overflow-hidden rounded-2xl bg-emerald-900/30 backdrop-blur-sm p-6 md:p-8"
+          style={{
+            transformStyle: isMobile ? "flat" : "preserve-3d",
+            transform: isMobile ? "none" : `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+            transition: "transform 0.1s ease-out",
+            willChange: isMobile ? "auto" : "transform",
+          }}
+        >
         {/* Lightning Arc Effect */}
         <LightningArc isActive={isHovered} />
 
@@ -444,8 +446,9 @@ function TiltCard({ icon: Icon, title, desc, children, delay = 0 }) {
         <div className="relative z-10">
           {children}
         </div>
-      </motion.div>
+      </div>
     </PlasmaBorder>
+    </motion.div>
   );
 }
 
