@@ -1363,6 +1363,9 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Electric divider between hero and about */}
+      <SectionDivider />
+
       {/* ABOUT SECTION */}
       <Section id="about" eyebrow="Philosophy" title="Design like nature: clear, adaptive, enduring.">
         <div className="grid md:grid-cols-2 gap-6 md:gap-10">
