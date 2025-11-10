@@ -123,40 +123,8 @@ const MatrixLandingPage = () => {
         />
       )}
 
-      {/* Global styles for glitch effect */}
+      {/* Removed glitch effect styles - keeping clean gradient text */}
       <style jsx>{`
-        /* ⚙️ GLITCH TEXT SPEED ADJUSTMENT:
-           Change the animation duration to adjust glitch speed
-           Lower = faster glitches (e.g., 1s), Higher = slower glitches (e.g., 6s)
-           Default was 2s, now set to 4s for slower, more subtle glitching */
-        .glitch-text {
-          display: inline-block;
-        }
-
-        .glitch-text::before {
-          content: attr(data-text);
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          text-shadow: -2px 0 #ff00de;
-          background: inherit;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          overflow: hidden;
-          animation: glitch 4s infinite;
-        }
-
-        @keyframes glitch {
-          0% { clip-path: inset(40% 0 61% 0); }
-          20% { clip-path: inset(92% 0 1% 0); }
-          40% { clip-path: inset(43% 0 1% 0); }
-          60% { clip-path: inset(25% 0 58% 0); }
-          80% { clip-path: inset(54% 0 7% 0); }
-          100% { clip-path: inset(58% 0 43% 0); }
-        }
       `}</style>
       {/* Matrix Canvas */}
       <canvas
@@ -322,8 +290,7 @@ const MatrixLandingPage = () => {
           <h1 className="text-5xl md:text-7xl font-extrabold mb-6 max-w-[600px] mx-auto">
             <div className="flex flex-col items-center">
               <span
-                className="relative glitch-text whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-amber-200"
-                data-text="INITIALIZING"
+                className="whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-amber-200"
                 style={{
                   filter: 'drop-shadow(0 0 10px rgba(52, 211, 153, 0.5)) drop-shadow(0 0 20px rgba(52, 211, 153, 0.3))',
                 }}
@@ -331,8 +298,7 @@ const MatrixLandingPage = () => {
                 INITIALIZING
               </span>
               <span
-                className="relative glitch-text whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
-                data-text="SYSTEM"
+                className="whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
                 style={{
                   filter: 'drop-shadow(0 0 10px rgba(252, 211, 77, 0.5)) drop-shadow(0 0 20px rgba(52, 211, 153, 0.3))',
                 }}
