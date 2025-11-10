@@ -224,7 +224,7 @@ const MatrixLandingPage = () => {
               }}
             />
 
-            {/* Digital Tree Logo SVG */}
+            {/* Organic Canopy Tree Logo SVG */}
             <svg
               viewBox="0 0 100 100"
               className="relative z-[1] w-full h-full"
@@ -232,113 +232,154 @@ const MatrixLandingPage = () => {
                 filter: 'drop-shadow(0 0 20px rgba(52, 211, 153, 0.8))',
               }}
             >
-              {/* Tree trunk */}
+              {/* Trunk - natural curves */}
               <path
-                d="M50 85 L50 55"
+                d="M48 90 Q47 70, 46 60 Q45 50, 46 40 Q47 30, 48 20"
+                stroke="#34d399"
+                strokeWidth="3"
+                fill="none"
+                strokeLinecap="round"
+              />
+              <path
+                d="M52 90 Q53 70, 54 60 Q55 50, 54 40 Q53 30, 52 20"
                 stroke="#34d399"
                 strokeWidth="3"
                 fill="none"
                 strokeLinecap="round"
               />
 
-              {/* Main branches - circuit-board style */}
+              {/* Main branches with natural curves */}
               <path
-                d="M50 55 L35 45 M50 55 L65 45"
+                d="M48 30 Q35 28, 25 25"
                 stroke="#34d399"
                 strokeWidth="2"
                 fill="none"
-                strokeLinecap="round"
               />
               <path
-                d="M50 60 L30 52 M50 60 L70 52"
+                d="M52 30 Q65 28, 75 25"
                 stroke="#34d399"
                 strokeWidth="2"
                 fill="none"
-                strokeLinecap="round"
               />
               <path
-                d="M50 68 L38 62 M50 68 L62 62"
+                d="M47 40 Q30 42, 20 40"
                 stroke="#34d399"
                 strokeWidth="2"
                 fill="none"
-                strokeLinecap="round"
               />
-
-              {/* Upper branches */}
               <path
-                d="M35 45 L28 38 M35 45 L38 35"
+                d="M53 40 Q70 42, 80 40"
+                stroke="#34d399"
+                strokeWidth="2"
+                fill="none"
+              />
+              <path
+                d="M47 50 Q35 55, 28 58"
                 stroke="#6ee7b7"
                 strokeWidth="1.5"
                 fill="none"
-                strokeLinecap="round"
               />
               <path
-                d="M65 45 L72 38 M65 45 L62 35"
+                d="M53 50 Q65 55, 72 58"
                 stroke="#6ee7b7"
                 strokeWidth="1.5"
                 fill="none"
-                strokeLinecap="round"
               />
 
-              {/* Foliage clusters - geometric leaves */}
-              <circle cx="50" cy="28" r="8" fill="rgba(52, 211, 153, 0.2)" stroke="#34d399" strokeWidth="1" />
-              <circle cx="28" cy="38" r="6" fill="rgba(52, 211, 153, 0.2)" stroke="#34d399" strokeWidth="1" />
-              <circle cx="72" cy="38" r="6" fill="rgba(52, 211, 153, 0.2)" stroke="#34d399" strokeWidth="1" />
-              <circle cx="38" cy="35" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
-              <circle cx="62" cy="35" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
-              <circle cx="30" cy="52" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
-              <circle cx="70" cy="52" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
+              {/* Organic canopy - layered ellipses */}
+              <ellipse
+                cx="50"
+                cy="25"
+                rx="35"
+                ry="20"
+                fill="rgba(52, 211, 153, 0.15)"
+                stroke="#34d399"
+                strokeWidth="1.5"
+              />
+              <ellipse
+                cx="30"
+                cy="35"
+                rx="18"
+                ry="12"
+                fill="rgba(110, 231, 183, 0.15)"
+                stroke="#6ee7b7"
+                strokeWidth="1"
+              />
+              <ellipse
+                cx="70"
+                cy="35"
+                rx="18"
+                ry="12"
+                fill="rgba(110, 231, 183, 0.15)"
+                stroke="#6ee7b7"
+                strokeWidth="1"
+              />
+              <ellipse
+                cx="50"
+                cy="45"
+                rx="25"
+                ry="15"
+                fill="rgba(52, 211, 153, 0.1)"
+                stroke="#34d399"
+                strokeWidth="1"
+              />
 
-              {/* Animated glowing nodes - data points */}
+              {/* Glowing nodes */}
               <motion.circle
                 cx="50"
-                cy="28"
-                r="2"
+                cy="20"
+                r="2.5"
                 fill="#fcd34d"
                 animate={{ opacity: [1, 0.3, 1], scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <motion.circle
-                cx="28"
-                cy="38"
+                cx="25"
+                cy="25"
                 r="2"
                 fill="#34d399"
                 animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
               />
               <motion.circle
-                cx="72"
-                cy="38"
+                cx="75"
+                cy="25"
                 r="2"
                 fill="#34d399"
                 animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
               />
               <motion.circle
-                cx="38"
+                cx="30"
                 cy="35"
                 r="1.5"
                 fill="#6ee7b7"
                 animate={{ opacity: [1, 0.4, 1] }}
-                transition={{ duration: 2.5, repeat: Infinity, delay: 0.9 }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.3 }}
               />
               <motion.circle
-                cx="62"
+                cx="70"
                 cy="35"
                 r="1.5"
                 fill="#6ee7b7"
                 animate={{ opacity: [1, 0.4, 1] }}
-                transition={{ duration: 2.5, repeat: Infinity, delay: 1.2 }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }}
               />
 
-              {/* Roots - digital connections */}
+              {/* Roots */}
               <path
-                d="M48 85 L42 92 M52 85 L58 92"
+                d="M48 90 Q42 94, 38 96"
                 stroke="#10b981"
                 strokeWidth="1.5"
                 fill="none"
-                strokeLinecap="round"
-                opacity="0.6"
+                opacity="0.7"
+              />
+              <path
+                d="M52 90 Q58 94, 62 96"
+                stroke="#10b981"
+                strokeWidth="1.5"
+                fill="none"
+                opacity="0.7"
               />
             </svg>
           </motion.div>
