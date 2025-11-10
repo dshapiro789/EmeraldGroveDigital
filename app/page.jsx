@@ -224,7 +224,7 @@ const MatrixLandingPage = () => {
               }}
             />
 
-            {/* Logo SVG */}
+            {/* Digital Tree Logo SVG */}
             <svg
               viewBox="0 0 100 100"
               className="relative z-[1] w-full h-full"
@@ -232,24 +232,113 @@ const MatrixLandingPage = () => {
                 filter: 'drop-shadow(0 0 20px rgba(52, 211, 153, 0.8))',
               }}
             >
-              <path d="M50 10L20 25L50 40L80 25L50 10Z" stroke="#34d399" strokeWidth="2" fill="rgba(52, 211, 153, 0.1)" />
-              <path d="M20 45L50 60L80 45" stroke="#34d399" strokeWidth="2" />
-              <path d="M20 65L50 80L80 65" stroke="#34d399" strokeWidth="2" />
+              {/* Tree trunk */}
+              <path
+                d="M50 85 L50 55"
+                stroke="#34d399"
+                strokeWidth="3"
+                fill="none"
+                strokeLinecap="round"
+              />
+
+              {/* Main branches - circuit-board style */}
+              <path
+                d="M50 55 L35 45 M50 55 L65 45"
+                stroke="#34d399"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+              />
+              <path
+                d="M50 60 L30 52 M50 60 L70 52"
+                stroke="#34d399"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+              />
+              <path
+                d="M50 68 L38 62 M50 68 L62 62"
+                stroke="#34d399"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+              />
+
+              {/* Upper branches */}
+              <path
+                d="M35 45 L28 38 M35 45 L38 35"
+                stroke="#6ee7b7"
+                strokeWidth="1.5"
+                fill="none"
+                strokeLinecap="round"
+              />
+              <path
+                d="M65 45 L72 38 M65 45 L62 35"
+                stroke="#6ee7b7"
+                strokeWidth="1.5"
+                fill="none"
+                strokeLinecap="round"
+              />
+
+              {/* Foliage clusters - geometric leaves */}
+              <circle cx="50" cy="28" r="8" fill="rgba(52, 211, 153, 0.2)" stroke="#34d399" strokeWidth="1" />
+              <circle cx="28" cy="38" r="6" fill="rgba(52, 211, 153, 0.2)" stroke="#34d399" strokeWidth="1" />
+              <circle cx="72" cy="38" r="6" fill="rgba(52, 211, 153, 0.2)" stroke="#34d399" strokeWidth="1" />
+              <circle cx="38" cy="35" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
+              <circle cx="62" cy="35" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
+              <circle cx="30" cy="52" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
+              <circle cx="70" cy="52" r="5" fill="rgba(110, 231, 183, 0.2)" stroke="#6ee7b7" strokeWidth="1" />
+
+              {/* Animated glowing nodes - data points */}
               <motion.circle
                 cx="50"
-                cy="25"
-                r="3"
-                fill="#34d399"
-                animate={{ opacity: [1, 0.3, 1] }}
+                cy="28"
+                r="2"
+                fill="#fcd34d"
+                animate={{ opacity: [1, 0.3, 1], scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
               <motion.circle
-                cx="50"
-                cy="60"
-                r="3"
-                fill="#fcd34d"
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                cx="28"
+                cy="38"
+                r="2"
+                fill="#34d399"
+                animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+              />
+              <motion.circle
+                cx="72"
+                cy="38"
+                r="2"
+                fill="#34d399"
+                animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+              />
+              <motion.circle
+                cx="38"
+                cy="35"
+                r="1.5"
+                fill="#6ee7b7"
+                animate={{ opacity: [1, 0.4, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.9 }}
+              />
+              <motion.circle
+                cx="62"
+                cy="35"
+                r="1.5"
+                fill="#6ee7b7"
+                animate={{ opacity: [1, 0.4, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 1.2 }}
+              />
+
+              {/* Roots - digital connections */}
+              <path
+                d="M48 85 L42 92 M52 85 L58 92"
+                stroke="#10b981"
+                strokeWidth="1.5"
+                fill="none"
+                strokeLinecap="round"
+                opacity="0.6"
               />
             </svg>
           </motion.div>
