@@ -186,14 +186,26 @@ const MatrixLandingPage = () => {
           transition={{ duration: 1, delay: 0.5 }}
           className="mb-8"
         >
-          <h2
-            className="text-xl md:text-2xl font-light tracking-[0.3em] text-emerald-400 uppercase"
+          <motion.h2
+            className="text-xl md:text-2xl font-light tracking-[0.3em] text-emerald-300 uppercase"
             style={{
-              textShadow: '0 0 10px rgba(52, 211, 153, 0.6), 0 0 20px rgba(52, 211, 153, 0.3)',
+              textShadow: '0 0 20px rgba(52, 211, 153, 0.9), 0 0 40px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.3)',
+            }}
+            animate={{
+              textShadow: [
+                '0 0 20px rgba(52, 211, 153, 0.9), 0 0 40px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.3)',
+                '0 0 30px rgba(52, 211, 153, 1), 0 0 60px rgba(52, 211, 153, 0.8), 0 0 80px rgba(52, 211, 153, 0.5)',
+                '0 0 20px rgba(52, 211, 153, 0.9), 0 0 40px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.3)',
+              ],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'easeInOut',
             }}
           >
             Emerald Grove Digital
-          </h2>
+          </motion.h2>
         </motion.div>
 
         {/* Heading */}
