@@ -40,7 +40,7 @@ const MatrixLandingPage = () => {
     canvas.height = window.innerHeight;
 
     // Matrix rain configuration
-    const chars = '01アイウエオカキクケコサシスセソタチツテト∴∵ΣΔΩ<>{}[]|/\\';
+    const chars = '01';
     const fontSize = 14;
     const columns = Math.floor(canvas.width / fontSize);
     const drops = Array(columns).fill(1);
@@ -123,37 +123,8 @@ const MatrixLandingPage = () => {
         />
       )}
 
-      {/* Global styles for glitch effect */}
+      {/* Removed glitch effect styles - keeping clean gradient text */}
       <style jsx>{`
-        /* ⚙️ GLITCH TEXT SPEED ADJUSTMENT:
-           Change the animation duration to adjust glitch speed
-           Lower = faster glitches (e.g., 1s), Higher = slower glitches (e.g., 6s)
-           Default was 2s, now set to 4s for slower, more subtle glitching */
-        .glitch-text {
-          display: inline-block;
-        }
-        
-        .glitch-text::before {
-          content: attr(data-text);
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          text-shadow: -2px 0 #ff00de;
-          color: #34d399;
-          overflow: hidden;
-          animation: glitch 4s infinite;
-        }
-
-        @keyframes glitch {
-          0% { clip-path: inset(40% 0 61% 0); }
-          20% { clip-path: inset(92% 0 1% 0); }
-          40% { clip-path: inset(43% 0 1% 0); }
-          60% { clip-path: inset(25% 0 58% 0); }
-          80% { clip-path: inset(54% 0 7% 0); }
-          100% { clip-path: inset(58% 0 43% 0); }
-        }
       `}</style>
       {/* Matrix Canvas */}
       <canvas
@@ -208,17 +179,24 @@ const MatrixLandingPage = () => {
         } : {}}
         transition={{ duration: 0.5 }}
       >
-        {/* Logo */}
+        {/* Brand Name */}
         <motion.div
-          initial={{ opacity: 0, x: -20, filter: 'blur(5px)' }}
-          animate={{ opacity: 1, x: 0, filter: 'blur(0)' }}
+          initial={{ opacity: 0, y: -20, filter: 'blur(5px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0)' }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="mb-12"
+          className="mb-8"
         >
-          <motion.div
-            className="w-[100px] h-[100px] mx-auto mb-6 relative"
+          <motion.h2
+            className="text-xl md:text-2xl font-light tracking-[0.3em] text-emerald-300 uppercase"
+            style={{
+              textShadow: '0 0 20px rgba(52, 211, 153, 0.9), 0 0 40px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.3)',
+            }}
             animate={{
-              y: [0, -10, 0],
+              textShadow: [
+                '0 0 20px rgba(52, 211, 153, 0.9), 0 0 40px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.3)',
+                '0 0 30px rgba(52, 211, 153, 1), 0 0 60px rgba(52, 211, 153, 0.8), 0 0 80px rgba(52, 211, 153, 0.5)',
+                '0 0 20px rgba(52, 211, 153, 0.9), 0 0 40px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.3)',
+              ],
             }}
             transition={{
               duration: 3,
@@ -226,87 +204,8 @@ const MatrixLandingPage = () => {
               ease: 'easeInOut',
             }}
           >
-            {/* Pulsing borders */}
-            <motion.div
-              className="absolute inset-0 border-2 border-emerald-400/50 rounded-3xl"
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.5, 0.8, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            />
-            <motion.div
-              className="absolute inset-0 border-2 border-emerald-400/50 rounded-3xl"
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.5, 0.8, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: 1,
-              }}
-            />
-
-            {/* Logo SVG */}
-            <svg
-              viewBox="0 0 100 100"
-              className="relative z-[1] w-full h-full"
-              style={{
-                filter: 'drop-shadow(0 0 20px rgba(52, 211, 153, 0.8))',
-              }}
-            >
-              <path d="M50 10L20 25L50 40L80 25L50 10Z" stroke="#34d399" strokeWidth="2" fill="rgba(52, 211, 153, 0.1)" />
-              <path d="M20 45L50 60L80 45" stroke="#34d399" strokeWidth="2" />
-              <path d="M20 65L50 80L80 65" stroke="#34d399" strokeWidth="2" />
-              <motion.circle
-                cx="50"
-                cy="25"
-                r="3"
-                fill="#34d399"
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <motion.circle
-                cx="50"
-                cy="60"
-                r="3"
-                fill="#fcd34d"
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-            </svg>
-          </motion.div>
-
-          <motion.div
-            className="text-2xl font-bold tracking-[0.2em] text-emerald-400"
-            style={{
-              textShadow: `
-                0 0 10px rgba(52, 211, 153, 0.8),
-                0 0 20px rgba(52, 211, 153, 0.5),
-                0 0 30px rgba(52, 211, 153, 0.3)
-              `,
-            }}
-            animate={{
-              textShadow: [
-                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5), 0 0 30px rgba(52, 211, 153, 0.3)',
-                '0 0 20px rgba(52, 211, 153, 1), 0 0 30px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.6)',
-                '0 0 10px rgba(52, 211, 153, 0.8), 0 0 20px rgba(52, 211, 153, 0.5), 0 0 30px rgba(52, 211, 153, 0.3)',
-              ],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          >
-            EMERALD GROVE DIGITAL
-          </motion.div>
+            Emerald Grove Digital
+          </motion.h2>
         </motion.div>
 
         {/* Heading */}
@@ -316,22 +215,20 @@ const MatrixLandingPage = () => {
           transition={{ duration: 1, delay: 1 }}
           className="mb-8"
         >
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white max-w-[600px] mx-auto">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 max-w-[600px] mx-auto">
             <div className="flex flex-col items-center">
               <span
-                className="relative glitch-text whitespace-nowrap"
-                data-text="INITIALIZING"
+                className="whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-amber-200"
                 style={{
-                  textShadow: '0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3)',
+                  filter: 'drop-shadow(0 0 10px rgba(52, 211, 153, 0.5)) drop-shadow(0 0 20px rgba(52, 211, 153, 0.3))',
                 }}
               >
                 INITIALIZING
               </span>
               <span
-                className="relative glitch-text whitespace-nowrap"
-                data-text="SYSTEM"
+                className="whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
                 style={{
-                  textShadow: '0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3)',
+                  filter: 'drop-shadow(0 0 10px rgba(252, 211, 77, 0.5)) drop-shadow(0 0 20px rgba(52, 211, 153, 0.3))',
                 }}
               >
                 SYSTEM
