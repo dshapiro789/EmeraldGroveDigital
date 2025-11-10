@@ -40,7 +40,7 @@ const MatrixLandingPage = () => {
     canvas.height = window.innerHeight;
 
     // Matrix rain configuration
-    const chars = '01アイウエオカキクケコサシスセソタチツテト∴∵ΣΔΩ<>{}[]|/\\';
+    const chars = '01';
     const fontSize = 14;
     const columns = Math.floor(canvas.width / fontSize);
     const drops = Array(columns).fill(1);
@@ -132,7 +132,7 @@ const MatrixLandingPage = () => {
         .glitch-text {
           display: inline-block;
         }
-        
+
         .glitch-text::before {
           content: attr(data-text);
           position: absolute;
@@ -141,7 +141,10 @@ const MatrixLandingPage = () => {
           width: 100%;
           height: 100%;
           text-shadow: -2px 0 #ff00de;
-          color: #34d399;
+          background: inherit;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
           overflow: hidden;
           animation: glitch 4s infinite;
         }
@@ -316,22 +319,22 @@ const MatrixLandingPage = () => {
           transition={{ duration: 1, delay: 1 }}
           className="mb-8"
         >
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white max-w-[600px] mx-auto">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 max-w-[600px] mx-auto">
             <div className="flex flex-col items-center">
               <span
-                className="relative glitch-text whitespace-nowrap"
+                className="relative glitch-text whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-emerald-400 to-amber-200"
                 data-text="INITIALIZING"
                 style={{
-                  textShadow: '0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3)',
+                  filter: 'drop-shadow(0 0 10px rgba(52, 211, 153, 0.5)) drop-shadow(0 0 20px rgba(52, 211, 153, 0.3))',
                 }}
               >
                 INITIALIZING
               </span>
               <span
-                className="relative glitch-text whitespace-nowrap"
+                className="relative glitch-text whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-emerald-100"
                 data-text="SYSTEM"
                 style={{
-                  textShadow: '0 0 10px rgba(52, 211, 153, 0.5), 0 0 20px rgba(52, 211, 153, 0.3)',
+                  filter: 'drop-shadow(0 0 10px rgba(252, 211, 77, 0.5)) drop-shadow(0 0 20px rgba(52, 211, 153, 0.3))',
                 }}
               >
                 SYSTEM
