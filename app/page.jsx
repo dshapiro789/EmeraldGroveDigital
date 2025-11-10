@@ -179,6 +179,23 @@ const MatrixLandingPage = () => {
         } : {}}
         transition={{ duration: 0.5 }}
       >
+        {/* Brand Name */}
+        <motion.div
+          initial={{ opacity: 0, y: -20, filter: 'blur(5px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="mb-8"
+        >
+          <h2
+            className="text-xl md:text-2xl font-light tracking-[0.3em] text-emerald-400 uppercase"
+            style={{
+              textShadow: '0 0 10px rgba(52, 211, 153, 0.6), 0 0 20px rgba(52, 211, 153, 0.3)',
+            }}
+          >
+            Emerald Grove Digital
+          </h2>
+        </motion.div>
+
         {/* Heading */}
         <motion.div
           initial={{ opacity: 0, x: -20, filter: 'blur(5px)' }}
